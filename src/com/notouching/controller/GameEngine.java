@@ -146,4 +146,16 @@ public class GameEngine {
     public Player getPlayer() {
         return player;
     }
+
+    public List<GameEntity> getEntities() {
+        return entities;
+    }
+
+    public List<People> getPeople() {
+        return people;
+    }
+
+    public List<Food> getFood() {
+        return food;
+    }
 }

@@ -4,7 +4,7 @@ public class Food extends GameEntity{
     private FoodType type;
 
     public Food(FoodType type, int y, int x) {
-        super(y, x);
+        super(EntityType.FOOD, y, x);
         this.type = type;
     }
 

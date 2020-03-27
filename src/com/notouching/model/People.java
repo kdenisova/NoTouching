@@ -4,7 +4,7 @@ public class People extends GameEntity{
     private Virus virus;
 
     public People(Virus virus, int y, int x) {
-        super(y, x);
+        super(EntityType.PEOPLE, y, x);
         this.virus = virus;
     }
 
