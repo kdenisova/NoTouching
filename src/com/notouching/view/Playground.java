@@ -76,11 +76,18 @@ public class Playground implements KeyListener {
         mapLabels[y][x].addKeyListener(this);
         renderPeople();
         renderFood();
-        
+
         frame.add(BorderLayout.WEST, mapPanel);
+
 
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+        infoPanel.setBorder(BorderFactory.createTitledBorder("Credentials"));
+
+
+        Dimension labelSize = new Dimension(300, 300);
+        Border solidBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
+
 
         JLabel pictureLabel = new JLabel(new ImageIcon(playerImage));
         pictureLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -98,13 +105,13 @@ public class Playground implements KeyListener {
 
 
         JLabel groceryListLabel = new JLabel(listText);
-        Dimension labelSize = new Dimension(80, 80);
+        //Dimension labelSize = new Dimension(80, 80);
 
         groceryListLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         groceryListLabel.setHorizontalAlignment(JLabel.CENTER);
         groceryListLabel.setPreferredSize(labelSize);
 
-        Border solidBorder = BorderFactory.createBevelBorder(1,Color.blue, Color.blue);
+        //Border solidBorder = BorderFactory.createBevelBorder(1,Color.blue, Color.blue);
         groceryListLabel.setBorder(solidBorder);
 
         Font font = new Font("Verdana", Font.PLAIN, 15);
