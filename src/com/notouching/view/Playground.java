@@ -6,6 +6,7 @@ import com.notouching.model.People;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -91,9 +92,22 @@ public class Playground implements KeyListener {
         JLabel sanitizerLabel = new JLabel("Amount of sanitizers: " + game.getPlayer().getSanitizer());
         sanitizerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel groceryListLabel = new JLabel("<html><br/><br/>Find all product from the grocery list. <br/>" +
-                "Caution, some products may be infected!</html>");
+        String listText = "<html><br/><br/>Find all product from the grocery list. <br/>" +
+                "Caution, some products may be infected!</html><br>";
+
+
+        JLabel groceryListLabel = new JLabel(listText);
+        Dimension labelSize = new Dimension(80, 80);
+
         groceryListLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        groceryListLabel.setHorizontalAlignment(JLabel.CENTER);
+        groceryListLabel.setPreferredSize(labelSize);
+
+        Border solidBorder = BorderFactory.createBevelBorder(1,Color.blue, Color.blue);
+        groceryListLabel.setBorder(solidBorder);
+
+        Font font = new Font("Verdana", Font.PLAIN, 15);
+        groceryListLabel.setFont(font);
 
         //nameLabel.setFont(new Font("Serif", Font.BOLD, 22));
         infoPanel.add(pictureLabel);
