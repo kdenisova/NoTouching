@@ -26,6 +26,7 @@ public class Playground implements KeyListener {
     private JLabel experienceLabel;
     private JLabel playerLabel;
     private Image playerImage;
+    private JCheckBox[] groceryBox;
     private List<People> people;
 
 
@@ -124,6 +125,14 @@ public class Playground implements KeyListener {
         infoPanel.add(sanitizerLabel);
         infoPanel.add(groceryListLabel);
 
+        groceryBox = new JCheckBox[game.getGrocery().size()];
+
+        for (int i = 0; i < game.getGrocery().size(); i++) {
+            groceryBox[i] = new JCheckBox(String.valueOf(game.getGrocery().get(i).getType()));
+            groceryBox[i].setEnabled(false);
+            infoPanel.add(groceryBox[i]);
+        }
+
         frame.add(BorderLayout.CENTER, infoPanel);
 
 
@@ -173,7 +182,7 @@ public class Playground implements KeyListener {
                 ex.printStackTrace();
             }
 
-            image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
+            image = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
             label = new JLabel(new ImageIcon(image));
 
             mapLabels[game.getPeople().get(i).getY()][game.getPeople().get(i).getX()].add(label);

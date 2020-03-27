@@ -3,6 +3,7 @@ package com.notouching.controller;
 import com.notouching.model.*;
 import com.notouching.view.Playground;
 
+import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ public class GameEngine {
     private Player player;
     private List<People> people;
     private List<Food> food;
+    private List<Food> grocery;
     private Playground playground;
     private int mapSize;
 
@@ -21,11 +23,12 @@ public class GameEngine {
         player = new Player(mapSize / 2, mapSize / 2);
         setPeople();
         setFood();
+        setGrocery();
         playground = new Playground(this, people, mapSize, player.getY(), player.getX());
         playground.render();
-        for (Food f : food) {
-            System.out.println(String.format("type: %s, y = %d, x = %d", f.getType(), f.getY(), f.getX()));
-        }
+//        for (Food f : food) {
+//            System.out.println(String.format("type: %s, y = %d, x = %d", f.getType(), f.getY(), f.getX()));
+//        }
 
     }
 
@@ -104,6 +107,52 @@ public class GameEngine {
         }
     }
 
+    public boolean checkGrocery(Food food) {
+        for (Food f : grocery) {
+            if (f.getType() == food.getType())
+                return true;
+        }
+
+        return false;
+    }
+
+    public void setGrocery() {
+        this.grocery = new ArrayList<>();
+        int n;
+
+        for (int i = 0; i < mapSize / 3 + player.getLevel(); i++) {
+            n = randomGenerator(food.size());
+
+            while (checkGrocery(food.get(n))) {
+                n = randomGenerator(food.size());
+            }
+
+            this.grocery.add(food.get(n));
+        }
+    }
+
+    public void checkEntity(int y, int x) {
+        //EntityType type;
+
+        for (GameEntity entity : entities) {
+            if (entity.getY() == y && entity.getX() == x) {
+                switch (entity.getEntityType()) {
+                    case VIRUS:
+
+                        break;
+                    case PEOPLE:
+
+                        break;
+                    case FOOD:
+                        if (checkGrocery((Food) entity))
+                            System.out.println("found");
+                        break;
+                }
+            }
+        }
+
+    }
+
     public void playerMoved(PlayerMove move) {
         int y, x;
         y = player.getY();
@@ -127,6 +176,7 @@ public class GameEngine {
                 break;
         }
 
+        //isOccupied(y, x);
 //        if (isOccupied(x, y)) {
 //            // int result = game.showMessageDialog();
 //            playground.showMessageDialog();
@@ -157,5 +207,9 @@ public class GameEngine {
 
     public List<Food> getFood() {
         return food;
+    }
+
+    public List<Food> getGrocery() {
+        return grocery;
     }
 }
