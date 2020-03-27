@@ -4,6 +4,7 @@ import com.notouching.model.People;
 import com.notouching.model.Player;
 import com.notouching.model.Virus;
 import com.notouching.model.VirusType;
+import com.notouching.view.Playground;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +19,11 @@ public class GameEngine {
         player = new Player(mapSize / 2, mapSize / 2);
         setPeople();
 
-        for (People person : people) {
-            System.out.println(String.format("type: %s, y = %d, x = %d", person.getVirus().getType(), person.getY(), person.getX()));
-        }
+        Playground playground = new Playground(this, mapSize);
+        playground.render();
+//        for (People person : people) {
+//            System.out.println(String.format("type: %s, y = %d, x = %d", person.getVirus().getType(), person.getY(), person.getX()));
+//        }
 
     }
 
