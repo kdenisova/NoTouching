@@ -12,7 +12,7 @@ public class Player {
         this.level = 1;
         this.experience = 0;
         this.health = 100;
-        this.sanitizer = 0;
+        this.sanitizer = 1;
         this.y = y;
         this.x = x;
     }

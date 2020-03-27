@@ -1,5 +1,7 @@
 package com.notouching.model;
 
+import java.util.Random;
+
 public enum FoodType {
     Apple,
     Carrot,
@@ -20,7 +22,13 @@ public enum FoodType {
     Meat,
     Croissant,
     Raspberry,
-    Pizza
+    Pizza;
+
+    public static FoodType getRandomFood() {
+        Random random = new Random();
+
+        return values()[random.nextInt(values().length)];
+    }
 }
 
 //public enum FoodType {

@@ -77,6 +77,34 @@ public class Playground implements KeyListener {
 
         frame.add(BorderLayout.WEST, mapPanel);
 
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
+
+        JLabel pictureLabel = new JLabel(new ImageIcon(playerImage));
+        pictureLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel levelLabel = new JLabel("Level: " + game.getPlayer().getLevel());
+        levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        experienceLabel = new JLabel("Experience: " + game.getPlayer().getExperience());
+        experienceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel healthLabel = new JLabel("Health: " + game.getPlayer().getHealth());
+        healthLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JLabel sanitizerLabel = new JLabel("Amount of sanitizers: " + game.getPlayer().getSanitizer());
+        sanitizerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel groceryListLabel = new JLabel("<html><br/><br/>Find all product from the grocery list. <br/>" +
+                "Caution, some products may be infected!</html>");
+        groceryListLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        //nameLabel.setFont(new Font("Serif", Font.BOLD, 22));
+        infoPanel.add(pictureLabel);
+        infoPanel.add(experienceLabel);
+        infoPanel.add(healthLabel);
+        infoPanel.add(sanitizerLabel);
+        infoPanel.add(groceryListLabel);
+
+        frame.add(BorderLayout.CENTER, infoPanel);
+
+
         frame.setBounds(50, 50, mapSize * (iconSize - 10) * 2, mapSize * iconSize);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize(); //Set a window on center of screen
         int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
@@ -118,8 +146,7 @@ public class Playground implements KeyListener {
         for (int i = 0; i < people.size(); i++) {
 
             try {
-                bufferedImage = ImageIO.read(new File("/Users/angrynimfa/projects/NoTouching/src/resources/img/" +
-                        "characters/" + (i % 6) + ".gif"));
+                bufferedImage = ImageIO.read(getClass().getResource("/img/characters/" + (i % 6) + ".gif"));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

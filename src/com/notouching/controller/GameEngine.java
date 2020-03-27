@@ -11,6 +11,7 @@ public class GameEngine {
     private List<GameEntity> entities = new ArrayList<>();
     private Player player;
     private List<People> people;
+    private List<Food> food;
     private Playground playground;
     private int mapSize;
 
@@ -19,12 +20,12 @@ public class GameEngine {
         setMapSize(15);
         player = new Player(mapSize / 2, mapSize / 2);
         setPeople();
-
+        setFood();
         playground = new Playground(this, people, mapSize, player.getY(), player.getX());
         playground.render();
-//        for (People person : people) {
-//            System.out.println(String.format("type: %s, y = %d, x = %d", person.getVirus().getType(), person.getY(), person.getX()));
-//        }
+        for (Food f : food) {
+            System.out.println(String.format("type: %s, y = %d, x = %d", f.getType(), f.getY(), f.getX()));
+        }
 
     }
 
@@ -78,9 +79,28 @@ public class GameEngine {
                 x = randomGenerator(mapSize);
                 y = randomGenerator(mapSize);
             }
-            People person = new People(chooseVirus(y, x, randomGenerator(3)), y, x);
+            People person = new People(new Virus(VirusType.getRandomVirus(), y, x), y, x);
             this.people.add(person);
             entities.add(person);
+        }
+    }
+
+    public void setFood() {
+        this.food = new ArrayList<>();
+
+        int y, x;
+
+        for (int i = 0; i < 20; i++) {
+            y = randomGenerator(mapSize);
+            x = randomGenerator(mapSize);
+
+            while ((y == player.getY() && x == player.getX()) || isOccupied(y, x)) {
+                x = randomGenerator(mapSize);
+                y = randomGenerator(mapSize);
+            }
+            Food f = new Food(FoodType.getRandomFood(), y, x);
+            this.food.add(f);
+            entities.add(f);
         }
     }
 
@@ -121,5 +141,9 @@ public class GameEngine {
         player.setX(x);
 
         playground.renderPlayer(oldY, oldX, y, x);
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }
