@@ -5,7 +5,7 @@ public class Virus extends GameEntity {
     private int damage;
 
     public Virus(VirusType type, int y, int x) {
-        super(y, x);
+        super(EntityType.VIRUS, y, x);
         this.type = type;
         setDamage();
     }

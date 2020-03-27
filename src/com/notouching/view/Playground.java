@@ -75,7 +75,8 @@ public class Playground implements KeyListener {
         mapLabels[y][x].setFocusable(true);
         mapLabels[y][x].addKeyListener(this);
         renderPeople();
-
+        renderFood();
+        
         frame.add(BorderLayout.WEST, mapPanel);
 
         JPanel infoPanel = new JPanel();
@@ -154,8 +155,8 @@ public class Playground implements KeyListener {
 
     public void renderPeople() {
         BufferedImage bufferedImage = null;
-        Image personImage;
-        JLabel personLabel;
+        Image image;
+        JLabel label;
 
         for (int i = 0; i < people.size(); i++) {
 
@@ -165,10 +166,30 @@ public class Playground implements KeyListener {
                 ex.printStackTrace();
             }
 
-            personImage = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
-            personLabel = new JLabel(new ImageIcon(personImage));
+            image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
+            label = new JLabel(new ImageIcon(image));
 
-            mapLabels[people.get(i).getY()][people.get(i).getX()].add(personLabel);
+            mapLabels[game.getPeople().get(i).getY()][game.getPeople().get(i).getX()].add(label);
+        }
+    }
+
+    public void renderFood() {
+        BufferedImage bufferedImage = null;
+        Image image;
+        JLabel label;
+
+        for (int i = 0; i < people.size(); i++) {
+
+            try {
+                bufferedImage = ImageIO.read(getClass().getResource("/img/food/" + game.getFood().get(i).getType() + ".png"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
+            label = new JLabel(new ImageIcon(image));
+
+            mapLabels[game.getFood().get(i).getY()][game.getFood().get(i).getX()].add(label);
         }
     }
 
