@@ -1,7 +1,7 @@
 package com.notouching.model;
 
 public class Food {
-    private String type;
+    private FoodType type;
     private int y;
     private int x;
 
