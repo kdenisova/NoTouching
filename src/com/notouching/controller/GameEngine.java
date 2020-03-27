@@ -6,20 +6,23 @@ import com.notouching.model.Virus;
 import com.notouching.model.VirusType;
 import com.notouching.view.Playground;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameEngine {
     private Player player;
     private List<People> people;
+    private Playground playground;
     private int mapSize;
+
 
     public void Play() {
         setMapSize(15);
         player = new Player(mapSize / 2, mapSize / 2);
         setPeople();
 
-        Playground playground = new Playground(this, mapSize);
+        playground = new Playground(this, people, mapSize, player.getY(), player.getX());
         playground.render();
 //        for (People person : people) {
 //            System.out.println(String.format("type: %s, y = %d, x = %d", person.getVirus().getType(), person.getY(), person.getX()));
@@ -80,5 +83,44 @@ public class GameEngine {
 
             this.people.add(new People(chooseVirus(randomGenerator(3)), y, x));
         }
+    }
+
+    public void playerMoved(PlayerMove move) {
+        int y, x;
+        y = player.getY();
+        x = player.getX();
+        switch (move) {
+            case UP:
+                if (y != 0)
+                    y--;
+                break;
+            case DOWN:
+                if (y < mapSize - 1)
+                    y++;
+                break;
+            case LEFT:
+                if (x != 0)
+                    x--;
+                break;
+            case RIGHT:
+                if (x < mapSize - 1)
+                    x++;
+                break;
+        }
+
+//        if (isOccupied(x, y)) {
+//            // int result = game.showMessageDialog();
+//            playground.showMessageDialog();
+//            return;
+//        }
+
+
+        int oldY = player.getY();
+        int oldX = player.getX();
+
+        player.setY(y);
+        player.setX(x);
+
+        playground.renderPlayer(oldY, oldX, y, x);
     }
 }

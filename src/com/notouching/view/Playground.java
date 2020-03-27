@@ -1,20 +1,25 @@
 package com.notouching.view;
 
 import com.notouching.controller.GameEngine;
+import com.notouching.controller.PlayerMove;
 import com.notouching.model.People;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class Playground {
+public class Playground implements KeyListener {
     private GameEngine game;
     private int mapSize;
     private int iconSize;
+    private int y;
+    private int x;
     private JFrame frame;
     private JLabel[][] mapLabels;
     private JLabel experienceLabel;
@@ -22,10 +27,14 @@ public class Playground {
     private Image playerImage;
     private List<People> people;
 
-    public Playground(GameEngine game, int mapSize) {
+
+    public Playground(GameEngine game, List<People> people, int mapSize, int y, int x) {
         this.game = game;
+        this.people = people;
         this.mapSize = mapSize;
         this.iconSize = 50;
+        this.y = y;
+        this.x = x;
     }
 
     public void render() {
@@ -59,6 +68,13 @@ public class Playground {
             }
         }
 
+        setPlayerLabel();
+
+        mapLabels[y][x].add(playerLabel);
+        mapLabels[y][x].setFocusable(true);
+        mapLabels[y][x].addKeyListener(this);
+        renderPeople();
+
         frame.add(BorderLayout.WEST, mapPanel);
 
         frame.setBounds(50, 50, mapSize * (iconSize - 10) * 2, mapSize * iconSize);
@@ -82,4 +98,60 @@ public class Playground {
         playerLabel = new JLabel(new ImageIcon(playerImage));
     }
 
+    public void renderPlayer(int oldY, int oldX, int newY, int newX) {
+        mapLabels[oldY][oldX].remove(playerLabel);
+
+        frame.revalidate();
+        frame.repaint();
+
+        mapLabels[oldY][oldX].revalidate();
+        mapLabels[oldY][oldX].repaint();
+
+        playerLabel = new JLabel(new ImageIcon(playerImage));
+        mapLabels[newY][newX].add(playerLabel);
+    }
+
+    public void renderPeople() {
+        BufferedImage bufferedImage = null;
+        Image personImage;
+        JLabel personLabel;
+
+        for (int i = 0; i < people.size(); i++) {
+
+            try {
+                bufferedImage = ImageIO.read(new File("/Users/angrynimfa/projects/NoTouching/src/resources/img/" +
+                        "characters/" + (i % 6) + ".gif"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            personImage = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
+            personLabel = new JLabel(new ImageIcon(personImage));
+
+            mapLabels[people.get(i).getY()][people.get(i).getX()].add(personLabel);
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            game.playerMoved(PlayerMove.DOWN);
+        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+            game.playerMoved(PlayerMove.UP);
+        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            game.playerMoved(PlayerMove.LEFT);
+        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            game.playerMoved(PlayerMove.RIGHT);
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
+    }
 }
