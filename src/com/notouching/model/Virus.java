@@ -1,12 +1,11 @@
 package com.notouching.model;
 
-public class Virus {
+public class Virus extends GameEntity {
     private VirusType type;
     private int damage;
-    private int y;
-    private int x;
 
-    public Virus(VirusType type) {
+    public Virus(VirusType type, int y, int x) {
+        super(y, x);
         this.type = type;
         setDamage();
     }
@@ -26,7 +25,7 @@ public class Virus {
     public void setDamage() {
         switch (type) {
             case COVID19:
-               this.damage = 30;
+                this.damage = 30;
                 break;
             case INFLUENZA:
                 this.damage = 15;
@@ -35,21 +34,5 @@ public class Virus {
                 this.damage = 10;
                 break;
         }
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
     }
 }

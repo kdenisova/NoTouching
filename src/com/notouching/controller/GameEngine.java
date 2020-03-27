@@ -1,9 +1,6 @@
 package com.notouching.controller;
 
-import com.notouching.model.People;
-import com.notouching.model.Player;
-import com.notouching.model.Virus;
-import com.notouching.model.VirusType;
+import com.notouching.model.*;
 import com.notouching.view.Playground;
 
 import java.awt.event.KeyEvent;
@@ -11,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameEngine {
+    private List<GameEntity> entities = new ArrayList<>();
     private Player player;
     private List<People> people;
     private Playground playground;
@@ -43,15 +41,15 @@ public class GameEngine {
     }
 
     public boolean isOccupied(int y, int x) {
-        for (People person : people) {
-            if (person.getY() == y && person.getX() == x) {
+        for (GameEntity entity : entities) {
+            if (entity.getY() == y && entity.getX() == x) {
                 return true;
             }
         }
         return false;
     }
 
-    public Virus chooseVirus(int n) {
+    public Virus chooseVirus(int y, int x, int n) {
         VirusType type;
         switch (n) {
             case 1:
@@ -64,7 +62,7 @@ public class GameEngine {
                 type = VirusType.ROTAVIRUS;
                 break;
         }
-        return new Virus(type);
+        return new Virus(type, y, x);
     }
 
     public void setPeople() {
@@ -80,8 +78,9 @@ public class GameEngine {
                 x = randomGenerator(mapSize);
                 y = randomGenerator(mapSize);
             }
-
-            this.people.add(new People(chooseVirus(randomGenerator(3)), y, x));
+            People person = new People(chooseVirus(y, x, randomGenerator(3)), y, x);
+            this.people.add(person);
+            entities.add(person);
         }
     }
 

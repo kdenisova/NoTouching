@@ -50,7 +50,7 @@ public class Playground implements KeyListener {
         BufferedImage bufferedMapImage = null;
 
         try {
-            bufferedMapImage = ImageIO.read(new File("/Users/angrynimfa/projects/NoTouching/src/resources/img/background/bg7.png"));
+            bufferedMapImage = ImageIO.read(getClass().getResource("/img/background/bg7.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -88,8 +88,7 @@ public class Playground implements KeyListener {
     public void setPlayerLabel() {
         BufferedImage bufferedPlayerImage = null;
         try {
-            bufferedPlayerImage = ImageIO.read(new File("/Users/angrynimfa/projects/NoTouching/src/resources/img/" +
-                    "mainCharacter/walk.gif"));
+            bufferedPlayerImage = ImageIO.read(getClass().getResource("/img/mainCharacter/walk.gif"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
