@@ -89,6 +89,9 @@ public class GameEngine {
         this.food = new ArrayList<>();
 
         int y, x;
+        int score;
+
+        score = (int) (20 + Math.random()*100);
 
         for (int i = 0; i < 20; i++) {
             y = randomGenerator(mapSize);
@@ -98,7 +101,7 @@ public class GameEngine {
                 x = randomGenerator(mapSize);
                 y = randomGenerator(mapSize);
             }
-            Food f = new Food(FoodType.getRandomFood(), y, x);
+            Food f = new Food(FoodType.getRandomFood(), score, y, x);
             this.food.add(f);
             entities.add(f);
         }
