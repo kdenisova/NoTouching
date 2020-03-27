@@ -1,6 +1,10 @@
 package com.notouching.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Player {
+    private List<Virus> viruses;
     private int level;
     private int experience;
     private int health;
@@ -63,5 +67,17 @@ public class Player {
 
     public void setSanitizer(int sanitizer) {
         this.sanitizer = sanitizer;
+    }
+
+    public List<Virus> getViruses() {
+        return viruses;
+    }
+
+    public void setViruses(Virus virus) {
+        if (this.viruses == null) {
+            this.viruses = new ArrayList<>();
+        }
+
+        this.viruses.add(virus);
     }
 }
