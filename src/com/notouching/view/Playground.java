@@ -184,12 +184,12 @@ public class Playground implements KeyListener {
     public void setPlayerLabel() {
         BufferedImage bufferedPlayerImage = null;
         try {
-            bufferedPlayerImage = ImageIO.read(getClass().getResource("/img/mainCharacter/walk.gif"));
+            bufferedPlayerImage = ImageIO.read(getClass().getResource("/img/mainCharacter/walk.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
-        playerImage = bufferedPlayerImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+        playerImage = bufferedPlayerImage.getScaledInstance(iconSize, iconSize, Image.;
         playerLabel = new JLabel(new ImageIcon(playerImage));
     }
 
