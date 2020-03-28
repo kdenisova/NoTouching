@@ -247,7 +247,7 @@ public class Playground implements KeyListener {
         for (int i = 0; i < people.size(); i++) {
 
             try {
-                bufferedImage = ImageIO.read(getClass().getResource("/img/characters/" + (i % 6) + ".gif"));
+                bufferedImage = ImageIO.read(getClass().getResource("/img/characters/" + (i % 6) + ".png"));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
