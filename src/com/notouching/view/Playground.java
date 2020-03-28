@@ -189,7 +189,7 @@ public class Playground implements KeyListener {
             ex.printStackTrace();
         }
 
-        playerImage = bufferedPlayerImage.getScaledInstance(iconSize, iconSize, Image.;
+        playerImage = bufferedPlayerImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
         playerLabel = new JLabel(new ImageIcon(playerImage));
     }
 
