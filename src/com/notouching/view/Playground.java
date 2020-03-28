@@ -252,7 +252,7 @@ public class Playground implements KeyListener {
                 ex.printStackTrace();
             }
 
-            image = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+            image = bufferedImage.getScaledInstance(iconSize - 10, iconSize - 10, Image.SCALE_SMOOTH);
             label = new JLabel(new ImageIcon(image));
 
             mapLabels[game.getPeople().get(i).getY()][game.getPeople().get(i).getX()].add(label);
