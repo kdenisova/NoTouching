@@ -83,6 +83,7 @@ public class Playground implements KeyListener {
         mapLabels[y][x].addKeyListener(this);
         renderPeople();
         renderFood();
+        renderSanitizers();
 
         frame.add(BorderLayout.WEST, mapPanel);
 
@@ -147,9 +148,7 @@ public class Playground implements KeyListener {
         frame.setVisible(true);
     }
 
-    public void updateFood(int experience, int y, int x) {
-        experienceLabel.setText("Experience: " + experience);
-
+    public void removeEntity(int y, int x) {
         for (int i = 0; i < renderedEntities.size(); i++) {
             if (y == renderedEntities.get(i).getEntity().getY() && x == renderedEntities.get(i).getEntity().getX()) {
                 mapLabels[y][x].remove(renderedEntities.get(i).getLabel());
@@ -163,6 +162,10 @@ public class Playground implements KeyListener {
 
         mapLabels[y][x].revalidate();
         mapLabels[y][x].repaint();
+    }
+
+    public void updateFood(int experience) {
+        experienceLabel.setText("Experience: " + experience);
     }
 
     public void updateGroceryList(int i) {
@@ -241,6 +244,27 @@ public class Playground implements KeyListener {
 
             mapLabels[game.getFood().get(i).getY()][game.getFood().get(i).getX()].add(label);
             renderedEntities.add(new RenderedEntity(label, game.getFood().get(i)));
+        }
+    }
+
+    public void renderSanitizers() {
+        BufferedImage bufferedImage = null;
+        Image image;
+        JLabel label;
+
+        for (int i = 0; i < game.getSanitizers().size(); i++) {
+
+            try {
+                bufferedImage = ImageIO.read(getClass().getResource("/img/sanitizers/" + (i % 6) + ".png"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
+            label = new JLabel(new ImageIcon(image));
+
+            mapLabels[game.getSanitizers().get(i).getY()][game.getSanitizers().get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, game.getSanitizers().get(i)));
         }
     }
 
