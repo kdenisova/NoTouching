@@ -4,7 +4,9 @@ import com.notouching.model.*;
 import com.notouching.view.Playground;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class GameEngine implements Visitor {
     private List<GameEntity> entities = new ArrayList<>();
@@ -13,6 +15,7 @@ public class GameEngine implements Visitor {
     private List<Food> food;
     private List<Food> grocery;
     private List<Sanitizer> sanitizers;
+    private List<Virus> viruses;
     private Playground playground;
     private int mapSize;
 
@@ -238,6 +241,7 @@ public class GameEngine implements Visitor {
             player.setSanitizer(player.getSanitizer() - 1);
             playground.updateSanitizer(player.getSanitizer());
         }
+        setViruses(people.getVirus());
     }
 
     @Override
@@ -285,6 +289,20 @@ public class GameEngine implements Visitor {
             Sanitizer sanitizer = new Sanitizer(EntityType.SANITIZER, y, x);
             this.sanitizers.add(sanitizer);
             entities.add(sanitizer);
+        }
+    }
+
+    public List<Virus> getViruses() {
+        return viruses;
+    }
+
+    public void setViruses(Virus virus) {
+        if (this.viruses == null)
+            this.viruses = new ArrayList<>();
+
+        if (!this.viruses.contains(virus)) {
+            this.viruses.add(virus);
+            playground.renderVirus(virus.getType(), this.viruses.size());
         }
     }
 }

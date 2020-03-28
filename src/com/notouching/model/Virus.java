@@ -43,4 +43,13 @@ public class Virus extends GameEntity implements Interaction {
     public void accept(Visitor visitor) {
         visitor.interact(this);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+        return ((Virus)obj).getType() == this.getType();
+    }
 }

@@ -3,6 +3,7 @@ package com.notouching.view;
 import com.notouching.controller.GameEngine;
 import com.notouching.controller.PlayerMove;
 import com.notouching.model.People;
+import com.notouching.model.VirusType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -150,26 +151,12 @@ public class Playground implements KeyListener {
         JPanel virusPanel = new JPanel(new GridLayout());
         virusPanel.setBorder(BorderFactory.createTitledBorder("Virus Collections"));
 
-        virusesLabel = new JLabel[3];
+        virusesLabel = new JLabel[5];
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             virusesLabel[i] = new JLabel();
             virusPanel.add(virusesLabel[i]);
         }
-        //virusPanel.setLayout(new GridLayout(virusPanel));
-        //JLabel covid = new JLabel();
-//
-//        try {
-//            bufferedMapImage = ImageIO.read(getClass().getResource("/img/viruses/COVID19.png"));
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
-//
-//        Image virusImage = bufferedMapImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
-//        ImageIcon virusIcon = new ImageIcon(virusImage);
-//        JLabel covid = new JLabel();
-//        covid.setIcon(virusIcon);
-//        virusPanel.add(covid);
 
         infoPanel.add(virusPanel);
         frame.add(BorderLayout.CENTER, infoPanel);
@@ -300,6 +287,20 @@ public class Playground implements KeyListener {
             mapLabels[game.getSanitizers().get(i).getY()][game.getSanitizers().get(i).getX()].add(label);
             renderedEntities.add(new RenderedEntity(label, game.getSanitizers().get(i)));
         }
+    }
+
+    public void renderVirus(VirusType type, int i) {
+        BufferedImage bufferedImage = null;
+
+        try {
+            bufferedImage = ImageIO.read(getClass().getResource("/img/viruses/" + type + ".png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        Image virusImage = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+        ImageIcon virusIcon = new ImageIcon(virusImage);
+        virusesLabel[i].setIcon(virusIcon);
     }
 
     @Override
