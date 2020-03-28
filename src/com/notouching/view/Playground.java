@@ -165,6 +165,10 @@ public class Playground implements KeyListener {
         mapLabels[y][x].repaint();
     }
 
+    public void updateGroceryList(int i) {
+        groceryBox[i].setSelected(true);
+    }
+
     public void updateHealth(int health) {
         healthLabel.setText("Health:  " + health);
     }
@@ -224,7 +228,7 @@ public class Playground implements KeyListener {
         Image image;
         JLabel label;
 
-        for (int i = 0; i < people.size(); i++) {
+        for (int i = 0; i < game.getFood().size(); i++) {
 
             try {
                 bufferedImage = ImageIO.read(getClass().getResource("/img/food/" + game.getFood().get(i).getType() + ".png"));

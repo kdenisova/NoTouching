@@ -131,13 +131,13 @@ public class GameEngine implements Visitor {
                 switch (entity.getEntityType()) {
                     case VIRUS:
                         interact((Virus)entity);
-                        break;
+                        return;
                     case PEOPLE:
                         interact((People)entity);
-                        break;
+                        return;
                     case FOOD:
                         interact((Food)entity);
-                        break;
+                        return;
                 }
             }
         }
@@ -237,8 +237,17 @@ public class GameEngine implements Visitor {
     public void interact(Food food) {
         player.setExperience(player.getExperience() + food.getPoints());
         playground.updateFood(player.getExperience(), food.getY(), food.getX());
-        //this.food.remove(food);
-        //entities.remove(food);
-        //System.out.println("size = " + entities.size());
+
+        for (int i = 0; i < grocery.size(); i++) {
+            if (grocery.get(i).getType() == food.getType()) {
+                playground.updateGroceryList(i);
+                //grocery.remove(i);
+                break;
+            }
+        }
+
+        this.food.remove(food);
+        this.entities.remove(food);
+        //System.out.println("size = " + this.entities.size());
     }
 }
