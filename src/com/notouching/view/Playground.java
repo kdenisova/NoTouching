@@ -92,10 +92,8 @@ public class Playground implements KeyListener {
         infoPanel.setBorder(BorderFactory.createTitledBorder("Credentials"));
 
         Dimension labelSize = new Dimension(300, 300);
-<<<<<<< HEAD
-=======
-        Border solidBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
->>>>>>> defe1ec02151986dcf9750f2d19137fe5ccec34c
+
+        //Border solidBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
 
         JLabel pictureLabel = new JLabel(new ImageIcon(playerImage));
         pictureLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
