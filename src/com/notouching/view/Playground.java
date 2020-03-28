@@ -107,38 +107,62 @@ public class Playground implements KeyListener {
         sanitizerLabel = new JLabel("Amount of sanitizers: " + game.getPlayer().getSanitizer());
         sanitizerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        String listText = "<html><br/><br/>Find all product from the grocery list. <br/>" +
+        JPanel rulesPanel = new JPanel();
+        rulesPanel.setBorder(BorderFactory.createTitledBorder("Rules"));
+
+        String listText = "<html>Find all product from the grocery list. <br/>" +
                 "Caution, some products may be infected!</html><br>";
 
-        Border solidBorder = BorderFactory.createRaisedSoftBevelBorder();
+        //Border solidBorder = BorderFactory.createRaisedSoftBevelBorder();
 
-        JLabel groceryListLabel = new JLabel(listText);
-        groceryListLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        groceryListLabel.setHorizontalAlignment(JLabel.CENTER);
-        groceryListLabel.setVerticalAlignment(JLabel.CENTER);
-        groceryListLabel.setPreferredSize(labelSize);
+        JLabel rulesLabel = new JLabel(listText);
+        rulesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rulesLabel.setHorizontalAlignment(JLabel.CENTER);
+        rulesLabel.setVerticalAlignment(JLabel.CENTER);
+        //rulesLabel.setPreferredSize(labelSize);
 
 
-        groceryListLabel.setBorder(solidBorder);
+        //rulesLabel.setBorder(solidBorder);
 
         Font font = new Font("Verdana", Font.PLAIN, 15);
-        groceryListLabel.setFont(font);
-
-        //nameLabel.setFont(new Font("Serif", Font.BOLD, 22));
+        rulesLabel.setFont(font);
+        rulesPanel.add(rulesLabel);
         infoPanel.add(pictureLabel);
         infoPanel.add(experienceLabel);
         infoPanel.add(healthLabel);
         infoPanel.add(sanitizerLabel);
-        infoPanel.add(groceryListLabel);
+        infoPanel.add(rulesPanel);
+
+        JPanel groceryPanel = new JPanel();
+        groceryPanel.setBorder(BorderFactory.createTitledBorder("Grocery List"));
 
         groceryBox = new JCheckBox[game.getGrocery().size()];
 
         for (int i = 0; i < game.getGrocery().size(); i++) {
             groceryBox[i] = new JCheckBox(String.valueOf(game.getGrocery().get(i).getType()));
             groceryBox[i].setEnabled(false);
-            infoPanel.add(groceryBox[i]);
+            groceryPanel.add(groceryBox[i]);
         }
 
+        infoPanel.add(groceryPanel);
+
+        JPanel virusPanel = new JPanel(new GridLayout());
+        //virusPanel.setLayout(new GridLayout(virusPanel));
+        virusPanel.setBorder(BorderFactory.createTitledBorder("Virus Collections"));
+        //JLabel covid = new JLabel();
+
+        try {
+            bufferedMapImage = ImageIO.read(getClass().getResource("/img/viruses/COVID19.png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        Image virusImage = bufferedMapImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+        ImageIcon virusIcon = new ImageIcon(virusImage);
+        JLabel covid = new JLabel();
+        covid.setIcon(virusIcon);
+        virusPanel.add(covid);
+        infoPanel.add(virusPanel);
         frame.add(BorderLayout.CENTER, infoPanel);
 
         frame.setBounds(50, 50, mapSize * (iconSize - 10) * 2, mapSize * iconSize);
@@ -189,7 +213,7 @@ public class Playground implements KeyListener {
             ex.printStackTrace();
         }
 
-        playerImage = bufferedPlayerImage.getScaledInstance(iconSize, iconSize, Image.;
+        playerImage = bufferedPlayerImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
         playerLabel = new JLabel(new ImageIcon(playerImage));
     }
 
