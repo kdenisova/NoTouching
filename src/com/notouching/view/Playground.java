@@ -13,8 +13,13 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
+
+import static javax.swing.JOptionPane.PLAIN_MESSAGE;
+import static javax.swing.JOptionPane.WARNING_MESSAGE;
 
 public class Playground implements KeyListener {
     private GameEngine game;
@@ -57,6 +62,8 @@ public class Playground implements KeyListener {
 
         mapLabels = new JLabel[mapSize][mapSize];
         BufferedImage bufferedMapImage = null;
+
+        //gameMessage(2);
 
         try {
             bufferedMapImage = ImageIO.read(getClass().getResource("/img/background/bg7.png"));
@@ -224,6 +231,15 @@ public class Playground implements KeyListener {
 
         playerImage = bufferedPlayerImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
         playerLabel = new JLabel(new ImageIcon(playerImage));
+    }
+
+    public void gameMessage(int flag) {
+
+        if (flag == 1) {
+            JOptionPane.showInternalMessageDialog(null, "You win!", "WIN!", PLAIN_MESSAGE);
+        } else if (flag == 2) {
+            JOptionPane.showMessageDialog(null, "Loser", "You lose!", WARNING_MESSAGE);
+        }
     }
 
     public void renderPlayer(int oldY, int oldX, int newY, int newX) {
