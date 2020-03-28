@@ -3,12 +3,10 @@ package com.notouching.controller;
 import com.notouching.model.*;
 import com.notouching.view.Playground;
 
-import javax.swing.*;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameEngine {
+public class GameEngine implements Visitor {
     private List<GameEntity> entities = new ArrayList<>();
     private Player player;
     private List<People> people;
@@ -42,15 +40,6 @@ public class GameEngine {
 
     public int randomGenerator(int n) {
         return (int) (Math.random() * n);
-    }
-
-    public boolean isOccupied(int y, int x) {
-        for (GameEntity entity : entities) {
-            if (entity.getY() == y && entity.getX() == x) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public Virus chooseVirus(int y, int x, int n) {
@@ -91,10 +80,7 @@ public class GameEngine {
     public void setFood() {
         this.food = new ArrayList<>();
 
-        int y, x;
-        int score;
-
-        score = (int) (20 + Math.random()*100);
+        int y, x, points;
 
         for (int i = 0; i < 20; i++) {
             y = randomGenerator(mapSize);
@@ -104,7 +90,10 @@ public class GameEngine {
                 x = randomGenerator(mapSize);
                 y = randomGenerator(mapSize);
             }
-            Food f = new Food(FoodType.getRandomFood(), score, y, x);
+
+            points = (int) (20 + Math.random()*10);
+
+            Food f = new Food(FoodType.getRandomFood(), points, y, x);
             this.food.add(f);
             entities.add(f);
         }
@@ -141,19 +130,27 @@ public class GameEngine {
             if (entity.getY() == y && entity.getX() == x) {
                 switch (entity.getEntityType()) {
                     case VIRUS:
-
+                        interact((Virus)entity);
                         break;
                     case PEOPLE:
-
+                        interact((People)entity);
                         break;
                     case FOOD:
-                        if (checkGrocery((Food) entity))
-                            System.out.println("found");
+                        interact((Food)entity);
                         break;
                 }
             }
         }
 
+    }
+
+    public boolean isOccupied(int y, int x) {
+        for (GameEntity entity : entities) {
+            if (entity.getY() == y && entity.getX() == x) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void playerMoved(PlayerMove move) {
@@ -179,13 +176,8 @@ public class GameEngine {
                 break;
         }
 
-        //isOccupied(y, x);
-//        if (isOccupied(x, y)) {
-//            // int result = game.showMessageDialog();
-//            playground.showMessageDialog();
-//            return;
-//        }
-
+        if (isOccupied(y, x))
+            checkEntity(y, x);
 
         int oldY = player.getY();
         int oldX = player.getX();
@@ -214,5 +206,39 @@ public class GameEngine {
 
     public List<Food> getGrocery() {
         return grocery;
+    }
+
+    @Override
+    public void interact(Virus virus) {
+
+    }
+
+    @Override
+    public void interact(People people) {
+        if (player.getSanitizer() == 0) {
+            if (player.getHealth() - people.getVirus().getDamage() > 0) {
+                player.setHealth(player.getHealth() - people.getVirus().getDamage());
+                player.setViruses(people.getVirus());
+                playground.updateHealth(player.getHealth());
+            }
+            else {
+                player.setHealth(0);
+                player.setViruses(people.getVirus());
+                playground.updateHealth(0);
+            }
+        }
+        else {
+            player.setSanitizer(player.getSanitizer() - 1);
+            playground.updateSanitizer(player.getSanitizer());
+        }
+    }
+
+    @Override
+    public void interact(Food food) {
+        player.setExperience(player.getExperience() + food.getPoints());
+        playground.updateFood(player.getExperience(), food.getY(), food.getX());
+        //this.food.remove(food);
+        //entities.remove(food);
+        //System.out.println("size = " + entities.size());
     }
 }

@@ -13,10 +13,12 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Playground implements KeyListener {
     private GameEngine game;
+    private List<RenderedEntity> renderedEntities;
     private int mapSize;
     private int iconSize;
     private int y;
@@ -28,7 +30,9 @@ public class Playground implements KeyListener {
     private Image playerImage;
     private JCheckBox[] groceryBox;
     private List<People> people;
-
+    private JLabel levelLabel;
+    private JLabel healthLabel;
+    private JLabel sanitizerLabel;
 
     public Playground(GameEngine game, List<People> people, int mapSize, int y, int x) {
         this.game = game;
@@ -43,6 +47,8 @@ public class Playground implements KeyListener {
         frame = new JFrame("No Touching!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
+
+        renderedEntities = new ArrayList<>();
 
         GridLayout grid = new GridLayout(mapSize, mapSize);
 
@@ -85,18 +91,21 @@ public class Playground implements KeyListener {
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBorder(BorderFactory.createTitledBorder("Credentials"));
 
-
         Dimension labelSize = new Dimension(300, 300);
+<<<<<<< HEAD
+=======
+        Border solidBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
+>>>>>>> defe1ec02151986dcf9750f2d19137fe5ccec34c
 
         JLabel pictureLabel = new JLabel(new ImageIcon(playerImage));
         pictureLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel levelLabel = new JLabel("Level: " + game.getPlayer().getLevel());
+        levelLabel = new JLabel("Level: " + game.getPlayer().getLevel());
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         experienceLabel = new JLabel("Experience: " + game.getPlayer().getExperience());
         experienceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel healthLabel = new JLabel("Health: " + game.getPlayer().getHealth());
+        healthLabel = new JLabel("Health: " + game.getPlayer().getHealth());
         healthLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        JLabel sanitizerLabel = new JLabel("Amount of sanitizers: " + game.getPlayer().getSanitizer());
+        sanitizerLabel = new JLabel("Amount of sanitizers: " + game.getPlayer().getSanitizer());
         sanitizerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         String listText = "<html><br/><br/>Find all product from the grocery list. <br/>" +
@@ -133,13 +142,38 @@ public class Playground implements KeyListener {
 
         frame.add(BorderLayout.CENTER, infoPanel);
 
-
         frame.setBounds(50, 50, mapSize * (iconSize - 10) * 2, mapSize * iconSize);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize(); //Set a window on center of screen
         int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
         int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
         frame.setLocation(x, y);
         frame.setVisible(true);
+    }
+
+    public void updateFood(int experience, int y, int x) {
+        experienceLabel.setText("Experience: " + experience);
+
+        for (int i = 0; i < renderedEntities.size(); i++) {
+            if (y == renderedEntities.get(i).getEntity().getY() && x == renderedEntities.get(i).getEntity().getX()) {
+                mapLabels[y][x].remove(renderedEntities.get(i).getLabel());
+                renderedEntities.remove(i);
+                break;
+            }
+        }
+
+        frame.revalidate();
+        frame.repaint();
+
+        mapLabels[y][x].revalidate();
+        mapLabels[y][x].repaint();
+    }
+
+    public void updateHealth(int health) {
+        healthLabel.setText("Health:  " + health);
+    }
+
+    public void updateSanitizer(int sanitizer) {
+        sanitizerLabel.setText("Amount of sanitizers:  " + sanitizer);
     }
 
     public void setPlayerLabel() {
@@ -184,6 +218,7 @@ public class Playground implements KeyListener {
             label = new JLabel(new ImageIcon(image));
 
             mapLabels[game.getPeople().get(i).getY()][game.getPeople().get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, game.getPeople().get(i)));
         }
     }
 
@@ -204,6 +239,7 @@ public class Playground implements KeyListener {
             label = new JLabel(new ImageIcon(image));
 
             mapLabels[game.getFood().get(i).getY()][game.getFood().get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, game.getFood().get(i)));
         }
     }
 
