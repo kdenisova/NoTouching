@@ -12,6 +12,7 @@ public class GameEngine implements Visitor {
     private List<People> people;
     private List<Food> food;
     private List<Food> grocery;
+    private List<Sanitizer> sanitizers;
     private Playground playground;
     private int mapSize;
 
@@ -21,6 +22,7 @@ public class GameEngine implements Visitor {
         player = new Player(mapSize / 2, mapSize / 2);
         setPeople();
         setFood();
+        setSanitizers();
         setGrocery();
         playground = new Playground(this, people, mapSize, player.getY(), player.getX());
         playground.render();
@@ -67,7 +69,7 @@ public class GameEngine implements Visitor {
             y = randomGenerator(mapSize);
             x = randomGenerator(mapSize);
 
-            while ((y == player.getY() && x == player.getX()) || isOccupied(x, y)) {
+            while ((y == player.getY() && x == player.getX()) || isOccupied(y, x)) {
                 x = randomGenerator(mapSize);
                 y = randomGenerator(mapSize);
             }
@@ -98,6 +100,8 @@ public class GameEngine implements Visitor {
             entities.add(f);
         }
     }
+
+
 
     public boolean checkGrocery(Food food) {
         for (Food f : grocery) {
@@ -131,13 +135,16 @@ public class GameEngine implements Visitor {
                 switch (entity.getEntityType()) {
                     case VIRUS:
                         interact((Virus)entity);
-                        break;
+                        return;
                     case PEOPLE:
                         interact((People)entity);
-                        break;
+                        return;
                     case FOOD:
                         interact((Food)entity);
-                        break;
+                        return;
+                    case SANITIZER:
+                        interact((Sanitizer)entity);
+                        return;
                 }
             }
         }
@@ -236,9 +243,48 @@ public class GameEngine implements Visitor {
     @Override
     public void interact(Food food) {
         player.setExperience(player.getExperience() + food.getPoints());
-        playground.updateFood(player.getExperience(), food.getY(), food.getX());
-        //this.food.remove(food);
-        //entities.remove(food);
-        //System.out.println("size = " + entities.size());
+        playground.updateFood(player.getExperience());
+        playground.removeEntity(food.getY(), food.getX());
+
+        for (int i = 0; i < grocery.size(); i++) {
+            if (grocery.get(i).getType() == food.getType()) {
+                playground.updateGroceryList(i);
+                break;
+            }
+        }
+
+        this.food.remove(food);
+        this.entities.remove(food);
+        //System.out.println("size = " + this.entities.size());
+    }
+
+    @Override
+    public void interact(Sanitizer sanitizer) {
+        player.setSanitizer(player.getSanitizer() + 1);
+        playground.updateSanitizer(player.getSanitizer());
+        playground.removeEntity(sanitizer.getY(), sanitizer.getX());
+    }
+
+    public List<Sanitizer> getSanitizers() {
+        return sanitizers;
+    }
+
+    public void setSanitizers() {
+        this.sanitizers = new ArrayList<>();
+
+        int y, x;
+
+        for (int i = 0; i < mapSize / 5 + player.getLevel(); i++) {
+            y = randomGenerator(mapSize);
+            x = randomGenerator(mapSize);
+
+            while ((y == player.getY() && x == player.getX()) || isOccupied(y, x)) {
+                x = randomGenerator(mapSize);
+                y = randomGenerator(mapSize);
+            }
+            Sanitizer sanitizer = new Sanitizer(EntityType.SANITIZER, y, x);
+            this.sanitizers.add(sanitizer);
+            entities.add(sanitizer);
+        }
     }
 }
