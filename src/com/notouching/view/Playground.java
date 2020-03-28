@@ -33,6 +33,7 @@ public class Playground implements KeyListener {
     private JLabel levelLabel;
     private JLabel healthLabel;
     private JLabel sanitizerLabel;
+    private JLabel[] virusesLabel;
 
     public Playground(GameEngine game, List<People> people, int mapSize, int y, int x) {
         this.game = game;
@@ -147,21 +148,29 @@ public class Playground implements KeyListener {
         infoPanel.add(groceryPanel);
 
         JPanel virusPanel = new JPanel(new GridLayout());
-        //virusPanel.setLayout(new GridLayout(virusPanel));
         virusPanel.setBorder(BorderFactory.createTitledBorder("Virus Collections"));
-        //JLabel covid = new JLabel();
 
-        try {
-            bufferedMapImage = ImageIO.read(getClass().getResource("/img/viruses/COVID19.png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        virusesLabel = new JLabel[3];
+
+        for (int i = 0; i < 3; i++) {
+            virusesLabel[i] = new JLabel();
+            virusPanel.add(virusesLabel[i]);
         }
+        //virusPanel.setLayout(new GridLayout(virusPanel));
+        //JLabel covid = new JLabel();
+//
+//        try {
+//            bufferedMapImage = ImageIO.read(getClass().getResource("/img/viruses/COVID19.png"));
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+//
+//        Image virusImage = bufferedMapImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+//        ImageIcon virusIcon = new ImageIcon(virusImage);
+//        JLabel covid = new JLabel();
+//        covid.setIcon(virusIcon);
+//        virusPanel.add(covid);
 
-        Image virusImage = bufferedMapImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
-        ImageIcon virusIcon = new ImageIcon(virusImage);
-        JLabel covid = new JLabel();
-        covid.setIcon(virusIcon);
-        virusPanel.add(covid);
         infoPanel.add(virusPanel);
         frame.add(BorderLayout.CENTER, infoPanel);
 
