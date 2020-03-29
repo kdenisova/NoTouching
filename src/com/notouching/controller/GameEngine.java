@@ -72,7 +72,7 @@ public class GameEngine implements Visitor {
                                     int oldY = person.getY();
                                     int oldX = person.getX();
 
-                                    playground.renderEntity(oldY, oldX, y, x);
+                                    playground.movePeople(oldY, oldX, y, x);
 
                                     person.setY(y);
                                     person.setX(x);

@@ -117,31 +117,13 @@ public class Playground implements KeyListener {
 
         JLabel rule0 = new JLabel(" ");
         JLabel rule1 = new JLabel("Find all product from the grocery list.", JLabel.CENTER);
-        //rule1.setAlignmentX(Component.CENTER_ALIGNMENT);
         rule1.setFont(font);
         JLabel rule2 = new JLabel("And remember...", JLabel.CENTER);
-        //rule2.setAlignmentX(Component.CENTER_ALIGNMENT);
         rule2.setFont(font);
         JLabel rule3 = new JLabel("NO TOUCHING!", JLabel.CENTER);
-        //rule3.setAlignmentX(Component.CENTER_ALIGNMENT);
         rule3.setFont(font);
 
-//        String listText = "<html>Find all product from the grocery list. <br/>" +
-//                "And remember... NO TOUCHING!</html><br>";
-//
-//        //Border solidBorder = BorderFactory.createRaisedSoftBevelBorder();
-//        JLabel rulesLabel = new JLabel(listText);
-//        rulesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-//        rulesLabel.setHorizontalAlignment(JLabel.CENTER);
-//        rulesLabel.setVerticalAlignment(JLabel.CENTER);
-        //rulesLabel.setPreferredSize(labelSize);
 
-
-        //rulesLabel.setBorder(solidBorder);
-
-
-        //rulesLabel.setFont(font);
-        //rulesPanel.add(rulesLabel);
         rulesPanel.add(rule0);
         rulesPanel.add(rule1);
         rulesPanel.add(rule2);
@@ -214,7 +196,7 @@ public class Playground implements KeyListener {
         mapLabels[y][x].repaint();
     }
 
-    public void renderEntity(int oldY, int oldX, int newY, int newX) {
+    public void movePeople(int oldY, int oldX, int newY, int newX) {
         for (int i = 0; i < renderedEntities.size(); i++) {
             if (oldY == renderedEntities.get(i).getEntity().getY() && oldX == renderedEntities.get(i).getEntity().getX()) {
                 mapLabels[oldY][oldX].remove(renderedEntities.get(i).getLabel());
@@ -271,14 +253,14 @@ public class Playground implements KeyListener {
 
 
         if (flag == 1) {
-            JOptionPane.showInternalMessageDialog(null, "You win! Level UP", "WIN", PLAIN_MESSAGE, icon2);
+            JOptionPane.showInternalMessageDialog(null, "Level " + game.getPlayer().getLevel() + 1, "WIN", PLAIN_MESSAGE, icon2);
             renderedEntities.clear();
             frame.dispose();
         } else if (flag == 2) {
-            JOptionPane.showMessageDialog(null, "GAME OVER", "Oh no!", JOptionPane.PLAIN_MESSAGE, icon1);
+            JOptionPane.showMessageDialog(null, "Too many touching! GAME OVER", "Oh no!", JOptionPane.PLAIN_MESSAGE, icon1);
         }
         else
-            JOptionPane.showMessageDialog(null, "Viruses", "Looser", INFORMATION_MESSAGE, icon1);
+            JOptionPane.showMessageDialog(null, "Viruses win this round", "Virus collection is full", INFORMATION_MESSAGE, icon1);
                     //"You have compiled the entire collection of viruses. You lose!",
                    // "Oops", WARNING_MESSAGE);
     }
