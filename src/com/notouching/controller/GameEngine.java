@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class GameEngine implements Visitor {
+    private boolean status;
     private List<GameEntity> entities = new ArrayList<>();
     private Player player;
     private List<People> people;
@@ -20,7 +22,9 @@ public class GameEngine implements Visitor {
     private int mapSize;
 
 
-    public void Play() {
+    public void Play() throws InterruptedException {
+        int y, x;
+        setStatus(true);
         setMapSize(15);
         player = new Player(mapSize / 2, mapSize / 2);
         setPeople();
@@ -29,10 +33,36 @@ public class GameEngine implements Visitor {
         setGrocery();
         playground = new Playground(this, people, mapSize, player.getY(), player.getX());
         playground.render();
-//        for (Food f : food) {
-//            System.out.println(String.format("type: %s, y = %d, x = %d", f.getType(), f.getY(), f.getX()));
-//        }
 
+        while (status) {
+            for (People person : people) {
+                y = randomGenerator(2);
+                x = randomGenerator(2);
+
+                if (y == 0)
+                    y = person.getY() - 1;
+                else
+                    y = person.getY() + 1;
+
+                if (x == 0)
+                    x = person.getX() - 1;
+                else
+                    x = person.getX() + 1;
+
+                if (!isOccupied(y, x) && (x >= 0 && x < mapSize) && (y >= 0 && y < mapSize)) {
+                    int oldY = person.getY();
+                    int oldX = person.getX();
+
+                    playground.renderEntity(oldY, oldX, y, x);
+                    person.setY(y);
+                    person.setX(x);
+                }
+
+            }
+            //TimeUnit.MILLISECONDS.sleep(1000);
+            TimeUnit.SECONDS.sleep(1);
+
+        }
     }
 
     public int getMapSize() {
@@ -103,8 +133,6 @@ public class GameEngine implements Visitor {
             entities.add(f);
         }
     }
-
-
 
     public boolean checkGrocery(Food food) {
         for (Food f : grocery) {
@@ -189,13 +217,15 @@ public class GameEngine implements Visitor {
         if (isOccupied(y, x))
             checkEntity(y, x);
 
-        int oldY = player.getY();
-        int oldX = player.getX();
+        if (status) {
+            int oldY = player.getY();
+            int oldX = player.getX();
 
-        player.setY(y);
-        player.setX(x);
+            player.setY(y);
+            player.setX(x);
 
-        playground.renderPlayer(oldY, oldX, y, x);
+            playground.renderPlayer(oldY, oldX, y, x);
+        }
     }
 
     public Player getPlayer() {
@@ -235,13 +265,15 @@ public class GameEngine implements Visitor {
                 player.setHealth(0);
                 player.setViruses(people.getVirus());
                 playground.updateHealth(0);
+                setStatus(false);
+                playground.gameMessage(2);
             }
+            setViruses(people.getVirus());
         }
         else {
             player.setSanitizer(player.getSanitizer() - 1);
             playground.updateSanitizer(player.getSanitizer());
         }
-        setViruses(people.getVirus());
     }
 
     @Override
@@ -259,7 +291,6 @@ public class GameEngine implements Visitor {
 
         this.food.remove(food);
         this.entities.remove(food);
-        //System.out.println("size = " + this.entities.size());
     }
 
     @Override
@@ -303,6 +334,18 @@ public class GameEngine implements Visitor {
         if (!this.viruses.contains(virus)) {
             this.viruses.add(virus);
             playground.renderVirus(virus.getType(), this.viruses.size());
+
+            if (this.viruses.size() == 3)
+                setStatus(false);
         }
     }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
 }

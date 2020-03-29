@@ -162,6 +162,7 @@ public class Playground implements KeyListener {
 
         for (int i = 0; i < 5; i++) {
             virusesLabel[i] = new JLabel();
+            virusesLabel[i].setIcon(null);
             virusPanel.add(virusesLabel[i]);
         }
 
@@ -190,6 +191,25 @@ public class Playground implements KeyListener {
 
         mapLabels[y][x].revalidate();
         mapLabels[y][x].repaint();
+    }
+
+    public void renderEntity(int oldY, int oldX, int newY, int newX) {
+        for (int i = 0; i < renderedEntities.size(); i++) {
+            if (oldY == renderedEntities.get(i).getEntity().getY() && oldX == renderedEntities.get(i).getEntity().getX()) {
+                mapLabels[oldY][oldX].remove(renderedEntities.get(i).getLabel());
+
+                frame.revalidate();
+                frame.repaint();
+
+                mapLabels[oldY][oldX].revalidate();
+                mapLabels[oldY][oldX].repaint();
+
+                renderedEntities.get(i).setLabel(new JLabel(new ImageIcon(renderedEntities.get(i).getImage())));
+                mapLabels[newY][newX].add(renderedEntities.get(i).getLabel());
+
+                break;
+            }
+        }
     }
 
     public void updateFood(int experience) {
@@ -223,10 +243,13 @@ public class Playground implements KeyListener {
     public void gameMessage(int flag) {
 
         if (flag == 1) {
-            JOptionPane.showInternalMessageDialog(null, "You win!", "WIN!", PLAIN_MESSAGE);
+            JOptionPane.showInternalMessageDialog(null, "You win! Level UP", "WIN", PLAIN_MESSAGE);
         } else if (flag == 2) {
-            JOptionPane.showMessageDialog(null, "Loser", "You lose!", WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "GAME OVER", "Oh no!", WARNING_MESSAGE);
         }
+        else
+            JOptionPane.showMessageDialog(null, "You have compiled the entire collection of viruses. You lose!",
+                    "Oops", WARNING_MESSAGE);
     }
 
     public void renderPlayer(int oldY, int oldX, int newY, int newX) {
@@ -259,7 +282,7 @@ public class Playground implements KeyListener {
             label = new JLabel(new ImageIcon(image));
 
             mapLabels[game.getPeople().get(i).getY()][game.getPeople().get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, game.getPeople().get(i)));
+            renderedEntities.add(new RenderedEntity(label, image, game.getPeople().get(i)));
         }
     }
 
@@ -280,7 +303,7 @@ public class Playground implements KeyListener {
             label = new JLabel(new ImageIcon(image));
 
             mapLabels[game.getFood().get(i).getY()][game.getFood().get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, game.getFood().get(i)));
+            renderedEntities.add(new RenderedEntity(label, image, game.getFood().get(i)));
         }
     }
 
@@ -301,7 +324,7 @@ public class Playground implements KeyListener {
             label = new JLabel(new ImageIcon(image));
 
             mapLabels[game.getSanitizers().get(i).getY()][game.getSanitizers().get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, game.getSanitizers().get(i)));
+            renderedEntities.add(new RenderedEntity(label, image, game.getSanitizers().get(i)));
         }
     }
 
@@ -317,6 +340,10 @@ public class Playground implements KeyListener {
         Image virusImage = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
         ImageIcon virusIcon = new ImageIcon(virusImage);
         virusesLabel[i].setIcon(virusIcon);
+
+        if (i == 3) {
+            gameMessage(3);
+        }
     }
 
     @Override
@@ -326,14 +353,16 @@ public class Playground implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            game.playerMoved(PlayerMove.DOWN);
-        } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-            game.playerMoved(PlayerMove.UP);
-        } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            game.playerMoved(PlayerMove.LEFT);
-        } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            game.playerMoved(PlayerMove.RIGHT);
+        if (game.isStatus()) {
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                game.playerMoved(PlayerMove.DOWN);
+            } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                game.playerMoved(PlayerMove.UP);
+            } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                game.playerMoved(PlayerMove.LEFT);
+            } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                game.playerMoved(PlayerMove.RIGHT);
+            }
         }
     }
 

@@ -31,6 +31,10 @@ public class People extends GameEntity implements Interaction {
         }
     }
 
+    public void move(int y, int x) {
+
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.interact(this);
