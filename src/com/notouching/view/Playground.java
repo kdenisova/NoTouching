@@ -250,19 +250,20 @@ public class Playground implements KeyListener {
 
         ImageIcon icon1 = new ImageIcon("src/resources/img/background/virus.png");
         ImageIcon icon2 = new ImageIcon("src/resources/img/background/paper.png");
+        ImageIcon icon3 = new ImageIcon("src/resources/img/player/player80.png");
 
 
         if (flag == 1) {
-            JOptionPane.showInternalMessageDialog(null, "Level " + game.getPlayer().getLevel() + 1, "WIN", PLAIN_MESSAGE, icon2);
+            JOptionPane.showInternalMessageDialog(null, "Level " + (game.getPlayer().getLevel() + 1), "Level Up", PLAIN_MESSAGE, icon2);
             renderedEntities.clear();
             frame.dispose();
         } else if (flag == 2) {
-            JOptionPane.showMessageDialog(null, "Too many touching! GAME OVER", "Oh no!", JOptionPane.PLAIN_MESSAGE, icon1);
-        }
-        else
-            JOptionPane.showMessageDialog(null, "Viruses win this round", "Virus collection is full", INFORMATION_MESSAGE, icon1);
-                    //"You have compiled the entire collection of viruses. You lose!",
-                   // "Oops", WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Too many touching!", "GAME OVER", JOptionPane.PLAIN_MESSAGE, icon1);
+        } else if (flag == 3) {
+            JOptionPane.showMessageDialog(null, "Viruses win this round!", "Virus collection is full", INFORMATION_MESSAGE, icon1);
+        } else
+            JOptionPane.showMessageDialog(null, "You win and became a symbol of quarantine!",
+                    "Good job!", JOptionPane.PLAIN_MESSAGE, icon3);
     }
 
     public void renderPlayer(int oldY, int oldX, int newY, int newX) {

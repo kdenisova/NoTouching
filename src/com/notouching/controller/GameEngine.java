@@ -239,8 +239,12 @@ public class GameEngine implements Visitor {
     public void isWin() {
         if (foundItems == getGrocery().size()) {
             setStatus(false);
-            playground.gameMessage(1);
-            clear();
+            if (player.getLevel() + 1 <= 10) {
+                playground.gameMessage(1);
+                clear();
+            }
+            else
+                playground.gameMessage(0);
         }
     }
 
