@@ -219,11 +219,13 @@ public class Playground implements KeyListener {
     }
 
     public void updateGroceryList(int i) {
-        groceryBox[i].setSelected(true);
-        groceryItem += 1;
-
-        if (groceryItem == 6) {
-            gameMessage(1);
+        if (!groceryBox[i].isSelected()) {
+            groceryBox[i].setSelected(true);
+            groceryItem += 1;
+            if (groceryItem == game.getGrocery().size()) {
+                game.setStatus(false);
+                gameMessage(1);
+            }
         }
     }
 

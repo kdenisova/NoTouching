@@ -22,7 +22,8 @@ public enum FoodType {
     Meat,
     Croissant,
     Raspberry,
-    Pizza;
+    Pizza,
+    Paper;
 
     public static FoodType getRandomFood() {
         Random random = new Random();
