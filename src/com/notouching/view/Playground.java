@@ -41,6 +41,8 @@ public class Playground implements KeyListener {
     private JLabel sanitizerLabel;
     private JLabel[] virusesLabel;
 
+    private int groceryItem = 0;
+
     public Playground(GameEngine game, List<People> people, int mapSize, int y, int x) {
         this.game = game;
         this.people = people;
@@ -218,6 +220,11 @@ public class Playground implements KeyListener {
 
     public void updateGroceryList(int i) {
         groceryBox[i].setSelected(true);
+        groceryItem += 1;
+
+        if (groceryItem == 6) {
+            gameMessage(1);
+        }
     }
 
     public void updateHealth(int health) {
