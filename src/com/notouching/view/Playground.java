@@ -19,8 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 
-import static javax.swing.JOptionPane.PLAIN_MESSAGE;
-import static javax.swing.JOptionPane.WARNING_MESSAGE;
+import static javax.swing.JOptionPane.*;
 
 public class Playground implements KeyListener {
     private GameEngine game;
@@ -64,25 +63,23 @@ public class Playground implements KeyListener {
         JPanel mapPanel = new JPanel(grid);
 
         mapLabels = new JLabel[mapSize][mapSize];
-        BufferedImage bufferedMapImage = null;
-
-        //gameMessage(2);
+        BufferedImage bufferedImage = null;
 
         try {
-            bufferedMapImage = ImageIO.read(getClass().getResource("/img/background/bg7.png"));
+            bufferedImage = ImageIO.read(getClass().getResource("/img/background/bg7.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
 
-        Image mapImage = bufferedMapImage.getScaledInstance(iconSize, iconSize + 10, Image.SCALE_SMOOTH);
-        ImageIcon mapIcon = new ImageIcon(mapImage);
+        Image image = bufferedImage.getScaledInstance(iconSize, iconSize + 10, Image.SCALE_SMOOTH);
+        ImageIcon icon = new ImageIcon(image);
 
         for (int y = 0; y < mapSize; y++) {
             for (int x = 0; x < mapSize; x++) {
                 mapLabels[y][x] = new JLabel();
                 mapLabels[y][x].setSize(iconSize, iconSize);
                 mapLabels[y][x].setLayout(new BorderLayout());
-                mapLabels[y][x].setIcon(mapIcon);
+                mapLabels[y][x].setIcon(icon);
                 mapPanel.add(mapLabels[y][x]);
             }
         }
@@ -163,9 +160,17 @@ public class Playground implements KeyListener {
 
         virusesLabel = new JLabel[5];
 
+        try {
+            bufferedImage = ImageIO.read(getClass().getResource("/img/viruses/EMPTY.png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        image = bufferedImage.getScaledInstance(iconSize, iconSize + 10, Image.SCALE_SMOOTH);
+
         for (int i = 0; i < 5; i++) {
             virusesLabel[i] = new JLabel();
-            virusesLabel[i].setIcon(null);
+            virusesLabel[i].setIcon(new ImageIcon(image));
             virusPanel.add(virusesLabel[i]);
         }
 
@@ -250,7 +255,7 @@ public class Playground implements KeyListener {
     public void setPlayerLabel() {
         BufferedImage bufferedPlayerImage = null;
         try {
-            bufferedPlayerImage = ImageIO.read(getClass().getResource("/img/mainCharacter/walk.png"));
+            bufferedPlayerImage = ImageIO.read(getClass().getResource("/img/player/player.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -260,6 +265,17 @@ public class Playground implements KeyListener {
     }
 
     public void gameMessage(int flag) {
+        BufferedImage bufferedImage = null;
+
+        try {
+            bufferedImage = ImageIO.read(getClass().getResource("/img/viruses/anyvirus.png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        Image image = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+        ImageIcon icon = new ImageIcon(image);
+
 
         if (flag == 1) {
             JOptionPane.showInternalMessageDialog(null, "You win! Level UP", "WIN", PLAIN_MESSAGE);
@@ -267,8 +283,9 @@ public class Playground implements KeyListener {
             JOptionPane.showMessageDialog(null, "GAME OVER", "Oh no!", WARNING_MESSAGE);
         }
         else
-            JOptionPane.showMessageDialog(null, "You have compiled the entire collection of viruses. You lose!",
-                    "Oops", WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, new JLabel("Viruses", icon, JLabel.LEFT), "Looser", INFORMATION_MESSAGE);
+                    //"You have compiled the entire collection of viruses. You lose!",
+                   // "Oops", WARNING_MESSAGE);
     }
 
     public void renderPlayer(int oldY, int oldX, int newY, int newX) {
@@ -292,7 +309,7 @@ public class Playground implements KeyListener {
         for (int i = 0; i < people.size(); i++) {
 
             try {
-                bufferedImage = ImageIO.read(getClass().getResource("/img/characters/" + (i % 6) + ".png"));
+                bufferedImage = ImageIO.read(getClass().getResource("/img/people/" + (i % 6) + ".png"));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -360,7 +377,8 @@ public class Playground implements KeyListener {
         ImageIcon virusIcon = new ImageIcon(virusImage);
         virusesLabel[i].setIcon(virusIcon);
 
-        if (i == 3) {
+        if (i == 3 && game.isStatus()) {
+            game.setStatus(false);
             gameMessage(3);
         }
     }
