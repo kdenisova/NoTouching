@@ -268,6 +268,7 @@ public class Playground implements KeyListener {
 
         ImageIcon icon1 = new ImageIcon("src/resources/img/background/virus.png");
         ImageIcon icon2 = new ImageIcon("src/resources/img/background/paper.png");
+        ImageIcon icon3 = new ImageIcon("src/resources/img/player/player80.png");
 
 
         if (flag == 1) {
@@ -276,6 +277,9 @@ public class Playground implements KeyListener {
             frame.dispose();
         } else if (flag == 2) {
             JOptionPane.showMessageDialog(null, "GAME OVER", "Oh no!", JOptionPane.PLAIN_MESSAGE, icon1);
+        } else if (flag == 3) {
+            JOptionPane.showMessageDialog(null, "You win and became a symbol of quarantine!",
+                    "Good job!", JOptionPane.PLAIN_MESSAGE, icon3);
         }
         else
             JOptionPane.showMessageDialog(null, "Viruses", "Looser", INFORMATION_MESSAGE, icon1);
