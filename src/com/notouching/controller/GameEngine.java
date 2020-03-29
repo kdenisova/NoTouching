@@ -20,6 +20,7 @@ public class GameEngine implements Visitor {
     private int mapSize;
     private int speed;
     private volatile boolean isThreadRunning = false;
+    private int skipCount;
 
     public GameEngine() {
         this.mapSize = 15;
@@ -46,6 +47,11 @@ public class GameEngine implements Visitor {
                         @Override
                         public void run() {
                             int y, x;
+
+                            if (--skipCount > 0) {
+                                return;
+                            }
+
                             for (People person : people) {
                                 y = randomGenerator(2);
                                 x = randomGenerator(2);
@@ -205,6 +211,10 @@ public class GameEngine implements Visitor {
         }
     }
 
+    public void setSkipCount(int skipCount) {
+        this.skipCount = skipCount;
+    }
+
     public void checkEntity(int y, int x) {
 
         for (GameEntity entity : entities) {
@@ -299,6 +309,10 @@ public class GameEngine implements Visitor {
         return viruses;
     }
 
+    public int getSkipCount() {
+        return skipCount;
+    }
+
     public boolean isStatus() {
         return status;
     }
@@ -335,6 +349,7 @@ public class GameEngine implements Visitor {
         player.setScore(player.getScore() + food.getScore());
         playground.updateScore(player.getScore());
         playground.removeEntity(food.getY(), food.getX());
+        skipCount = 2;
 
         for (int i = 0; i < grocery.size(); i++) {
             if (grocery.get(i).getType() == food.getType()) {
