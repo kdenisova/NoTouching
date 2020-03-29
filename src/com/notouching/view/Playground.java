@@ -87,9 +87,6 @@ public class Playground implements KeyListener {
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBorder(BorderFactory.createTitledBorder("Credentials"));
 
-        Dimension labelSize = new Dimension(300, 300);
-
-        //Border solidBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
         Font font = new Font("Verdana", Font.PLAIN, 15);
 
         JLabel pictureLabel = new JLabel(new ImageIcon(playerImage));
@@ -97,8 +94,6 @@ public class Playground implements KeyListener {
         JLabel levelLabel = new JLabel("Level: " + game.getPlayer().getLevel());
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         levelLabel.setFont(font);
-
-
 
         scoreLabel = new JLabel("Score: " + game.getPlayer().getScore());
         scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -122,7 +117,6 @@ public class Playground implements KeyListener {
         rule2.setFont(font);
         JLabel rule3 = new JLabel("NO TOUCHING!", JLabel.CENTER);
         rule3.setFont(font);
-
 
         rulesPanel.add(rule0);
         rulesPanel.add(rule1);

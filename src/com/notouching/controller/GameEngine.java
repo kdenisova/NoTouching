@@ -185,8 +185,8 @@ public class GameEngine implements Visitor {
         this.sanitizers = new ArrayList<>();
 
         int y, x;
-
-        for (int i = 0; i < mapSize / 5 + player.getLevel(); i++) {
+        //mapSize / 5 + player.getLevel()
+        for (int i = 0; i < player.getLevel() % 5 + 1; i++) {
             y = randomGenerator(mapSize);
             x = randomGenerator(mapSize);
 
