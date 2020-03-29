@@ -6,7 +6,6 @@ import com.notouching.view.Playground;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class GameEngine implements Visitor {
     private boolean status;
@@ -23,25 +22,8 @@ public class GameEngine implements Visitor {
     private volatile boolean isThreadRunning = false;
 
     public GameEngine() {
-        setMapSize(15);
+        this.mapSize = 15;
         this.player = new Player(mapSize / 2, mapSize / 2);
-    }
-
-    public void clear() {
-        System.out.println("level " + player.getLevel());
-        player.setLevel(player.getLevel() + 1);
-        player.setY(mapSize / 2);
-        player.setX(mapSize / 2);
-        entities.clear();
-        people.clear();
-        food.clear();
-        grocery.clear();
-        sanitizers.clear();
-
-        if (viruses != null)
-            viruses.clear();
-
-        play();
     }
 
     public void play() {
@@ -106,12 +88,20 @@ public class GameEngine implements Visitor {
             isThreadRunning = false;
     }
 
-    public int getMapSize() {
-        return mapSize;
-    }
+    public void clear() {
+        player.setLevel(player.getLevel() + 1);
+        player.setY(mapSize / 2);
+        player.setX(mapSize / 2);
+        entities.clear();
+        people.clear();
+        food.clear();
+        grocery.clear();
+        sanitizers.clear();
 
-    public void setMapSize(int mapSize) {
-        this.mapSize = mapSize;
+        if (viruses != null)
+            viruses.clear();
+
+        play();
     }
 
     public int randomGenerator(int n) {
@@ -140,9 +130,9 @@ public class GameEngine implements Visitor {
     public void setFood() {
         this.food = new ArrayList<>();
 
-        int y, x, points;
+        int y, x, score;
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < FoodType.values().length + player.getLevel(); i++) {
             y = randomGenerator(mapSize);
             x = randomGenerator(mapSize);
 
@@ -151,9 +141,9 @@ public class GameEngine implements Visitor {
                 y = randomGenerator(mapSize);
             }
 
-            points = (int) (20 + Math.random()*10);
+            score = (int) (20 + Math.random() * 10);
 
-            Food f = new Food(FoodType.getRandomFood(), points, y, x);
+            Food f = new Food(FoodType.getRandomFood(), score, y, x);
             this.food.add(f);
             entities.add(f);
         }
@@ -183,15 +173,43 @@ public class GameEngine implements Visitor {
         }
     }
 
+    public void setSanitizers() {
+        this.sanitizers = new ArrayList<>();
+
+        int y, x;
+
+        for (int i = 0; i < mapSize / 5 + player.getLevel(); i++) {
+            y = randomGenerator(mapSize);
+            x = randomGenerator(mapSize);
+
+            while ((y == player.getY() && x == player.getX()) || isOccupied(y, x)) {
+                x = randomGenerator(mapSize);
+                y = randomGenerator(mapSize);
+            }
+            Sanitizer sanitizer = new Sanitizer(EntityType.SANITIZER, y, x);
+            this.sanitizers.add(sanitizer);
+            entities.add(sanitizer);
+        }
+    }
+
+    public void setViruses(Virus virus) {
+        if (this.viruses == null)
+            this.viruses = new ArrayList<>();
+
+        if (!this.viruses.contains(virus)) {
+            this.viruses.add(virus);
+            playground.renderVirus(virus.getType(), this.viruses.size());
+
+            if (this.viruses.size() == 3)
+                setStatus(false);
+        }
+    }
+
     public void checkEntity(int y, int x) {
-        //EntityType type;
 
         for (GameEntity entity : entities) {
             if (entity.getY() == y && entity.getX() == x) {
                 switch (entity.getEntityType()) {
-                    case VIRUS:
-                        interact((Virus)entity);
-                        return;
                     case PEOPLE:
                         interact((People)entity);
                         return;
@@ -204,7 +222,6 @@ public class GameEngine implements Visitor {
                 }
             }
         }
-
     }
 
     public boolean isOccupied(int y, int x) {
@@ -220,6 +237,7 @@ public class GameEngine implements Visitor {
         int y, x;
         y = player.getY();
         x = player.getX();
+
         switch (move) {
             case UP:
                 if (y != 0)
@@ -273,9 +291,20 @@ public class GameEngine implements Visitor {
         return grocery;
     }
 
-    @Override
-    public void interact(Virus virus) {
+    public List<Sanitizer> getSanitizers() {
+        return sanitizers;
+    }
 
+    public List<Virus> getViruses() {
+        return viruses;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     @Override
@@ -303,8 +332,8 @@ public class GameEngine implements Visitor {
 
     @Override
     public void interact(Food food) {
-        player.setExperience(player.getExperience() + food.getPoints());
-        playground.updateFood(player.getExperience());
+        player.setScore(player.getScore() + food.getScore());
+        playground.updateScore(player.getScore());
         playground.removeEntity(food.getY(), food.getX());
 
         for (int i = 0; i < grocery.size(); i++) {
@@ -323,54 +352,6 @@ public class GameEngine implements Visitor {
         player.setSanitizer(player.getSanitizer() + 1);
         playground.updateSanitizer(player.getSanitizer());
         playground.removeEntity(sanitizer.getY(), sanitizer.getX());
-    }
-
-    public List<Sanitizer> getSanitizers() {
-        return sanitizers;
-    }
-
-    public void setSanitizers() {
-        this.sanitizers = new ArrayList<>();
-
-        int y, x;
-
-        for (int i = 0; i < mapSize / 5 + player.getLevel(); i++) {
-            y = randomGenerator(mapSize);
-            x = randomGenerator(mapSize);
-
-            while ((y == player.getY() && x == player.getX()) || isOccupied(y, x)) {
-                x = randomGenerator(mapSize);
-                y = randomGenerator(mapSize);
-            }
-            Sanitizer sanitizer = new Sanitizer(EntityType.SANITIZER, y, x);
-            this.sanitizers.add(sanitizer);
-            entities.add(sanitizer);
-        }
-    }
-
-    public List<Virus> getViruses() {
-        return viruses;
-    }
-
-    public void setViruses(Virus virus) {
-        if (this.viruses == null)
-            this.viruses = new ArrayList<>();
-
-        if (!this.viruses.contains(virus)) {
-            this.viruses.add(virus);
-            playground.renderVirus(virus.getType(), this.viruses.size());
-
-            if (this.viruses.size() == 3)
-                setStatus(false);
-        }
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
     }
 
 }
