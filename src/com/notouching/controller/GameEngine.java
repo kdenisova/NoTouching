@@ -19,6 +19,8 @@ public class GameEngine implements Visitor {
     private List<Virus> viruses;
     private Playground playground;
     private int mapSize;
+    private int speed;
+    private volatile boolean isThreadRunning = false;
 
     public GameEngine() {
         setMapSize(15);
@@ -26,13 +28,19 @@ public class GameEngine implements Visitor {
     }
 
     public void clear() {
+        System.out.println("level " + player.getLevel());
         player.setLevel(player.getLevel() + 1);
-        entities = null;
-        people = null;
-        grocery = null;
-        sanitizers = null;
-        viruses = null;
-        playground = null;
+        player.setY(mapSize / 2);
+        player.setX(mapSize / 2);
+        entities.clear();
+        people.clear();
+        food.clear();
+        grocery.clear();
+        sanitizers.clear();
+
+        if (viruses != null)
+            viruses.clear();
+
         play();
     }
 
@@ -42,12 +50,15 @@ public class GameEngine implements Visitor {
         setFood();
         setSanitizers();
         setGrocery();
-        playground = new Playground(this, people, mapSize, player.getY(), player.getX());
+        speed = 1000 / player.getLevel();
+        playground = new Playground(this, mapSize, player.getY(), player.getX());
         playground.render();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
+                isThreadRunning = true;
+
                 while (status) {
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
@@ -84,16 +95,15 @@ public class GameEngine implements Visitor {
                     });
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(speed);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
             }
         }).start();
-            //TimeUnit.MILLISECONDS.sleep(1000);
-            //TimeUnit.SECONDS.sleep(1);
-
+        if (!status)
+            isThreadRunning = false;
     }
 
     public int getMapSize() {
@@ -106,22 +116,6 @@ public class GameEngine implements Visitor {
 
     public int randomGenerator(int n) {
         return (int) (Math.random() * n);
-    }
-
-    public Virus chooseVirus(int y, int x, int n) {
-        VirusType type;
-        switch (n) {
-            case 1:
-                type = VirusType.COVID19;
-                break;
-            case 2:
-                type = VirusType.INFLUENZA;
-                break;
-            default:
-                type = VirusType.ROTAVIRUS;
-                break;
-        }
-        return new Virus(type, y, x);
     }
 
     public void setPeople() {

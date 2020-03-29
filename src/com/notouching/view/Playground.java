@@ -2,19 +2,15 @@ package com.notouching.view;
 
 import com.notouching.controller.GameEngine;
 import com.notouching.controller.PlayerMove;
-import com.notouching.model.People;
 import com.notouching.model.VirusType;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -34,7 +30,6 @@ public class Playground implements KeyListener {
     private JLabel playerLabel;
     private Image playerImage;
     private JCheckBox[] groceryBox;
-    private List<People> people;
     private JLabel levelLabel;
     private JLabel healthLabel;
     private JLabel sanitizerLabel;
@@ -42,9 +37,8 @@ public class Playground implements KeyListener {
 
     private int groceryItem = 0;
 
-    public Playground(GameEngine game, List<People> people, int mapSize, int y, int x) {
+    public Playground(GameEngine game, int mapSize, int y, int x) {
         this.game = game;
-        this.people = people;
         this.mapSize = mapSize;
         this.iconSize = 50;
         this.y = y;
@@ -116,24 +110,42 @@ public class Playground implements KeyListener {
         sanitizerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JPanel rulesPanel = new JPanel();
+        rulesPanel.setLayout(new GridLayout(5, 1));
         rulesPanel.setBorder(BorderFactory.createTitledBorder("Rules"));
 
-        String listText = "<html>Find all product from the grocery list. <br/>" +
-                "Caution, some products may be infected!</html><br>";
+        Font font = new Font("Verdana", Font.PLAIN, 15);
 
-        //Border solidBorder = BorderFactory.createRaisedSoftBevelBorder();
-        JLabel rulesLabel = new JLabel(listText);
-        rulesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        rulesLabel.setHorizontalAlignment(JLabel.CENTER);
-        rulesLabel.setVerticalAlignment(JLabel.CENTER);
+        JLabel rule0 = new JLabel(" ");
+        JLabel rule1 = new JLabel("Find all product from the grocery list.", JLabel.CENTER);
+        //rule1.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rule1.setFont(font);
+        JLabel rule2 = new JLabel("And remember...", JLabel.CENTER);
+        //rule2.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rule2.setFont(font);
+        JLabel rule3 = new JLabel("NO TOUCHING!", JLabel.CENTER);
+        //rule3.setAlignmentX(Component.CENTER_ALIGNMENT);
+        rule3.setFont(font);
+
+//        String listText = "<html>Find all product from the grocery list. <br/>" +
+//                "And remember... NO TOUCHING!</html><br>";
+//
+//        //Border solidBorder = BorderFactory.createRaisedSoftBevelBorder();
+//        JLabel rulesLabel = new JLabel(listText);
+//        rulesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+//        rulesLabel.setHorizontalAlignment(JLabel.CENTER);
+//        rulesLabel.setVerticalAlignment(JLabel.CENTER);
         //rulesLabel.setPreferredSize(labelSize);
 
 
         //rulesLabel.setBorder(solidBorder);
 
-        Font font = new Font("Verdana", Font.PLAIN, 15);
-        rulesLabel.setFont(font);
-        rulesPanel.add(rulesLabel);
+
+        //rulesLabel.setFont(font);
+        //rulesPanel.add(rulesLabel);
+        rulesPanel.add(rule0);
+        rulesPanel.add(rule1);
+        rulesPanel.add(rule2);
+        rulesPanel.add(rule3);
         infoPanel.add(pictureLabel);
         infoPanel.add(levelLabel);
         infoPanel.add(experienceLabel);
@@ -231,11 +243,10 @@ public class Playground implements KeyListener {
             groceryItem += 1;
             if (groceryItem == game.getGrocery().size()) {
                 game.setStatus(false);
-                game.getPlayer().setLevel(game.getPlayer().getLevel() + 1);
-                //updateLevel(game.getPlayer().getLevel());
                 gameMessage(1);
-                //frame.dispose();
-                //game.clear();
+                renderedEntities.clear();
+                frame.dispose();
+                game.clear();
             }
         }
     }
@@ -247,10 +258,6 @@ public class Playground implements KeyListener {
     public void updateSanitizer(int sanitizer) {
         sanitizerLabel.setText("Amount of sanitizers:  " + sanitizer);
     }
-
-//    public void updateLevel(int level) {
-//        levelLabel.setText("Level: " + level);
-//    }
 
     public void setPlayerLabel() {
         BufferedImage bufferedPlayerImage = null;
@@ -306,7 +313,7 @@ public class Playground implements KeyListener {
         Image image;
         JLabel label;
 
-        for (int i = 0; i < people.size(); i++) {
+        for (int i = 0; i < game.getPeople().size(); i++) {
 
             try {
                 bufferedImage = ImageIO.read(getClass().getResource("/img/people/" + (i % 6) + ".png"));
