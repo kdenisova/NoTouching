@@ -60,7 +60,7 @@ public class Playground implements KeyListener {
         BufferedImage bufferedImage = null;
 
         try {
-            bufferedImage = ImageIO.read(getClass().getResource("/img/background/bg15.png"));
+            bufferedImage = ImageIO.read(getClass().getResource("/img/background/bg19.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -279,25 +279,28 @@ public class Playground implements KeyListener {
     }
 
     public void gameMessage(int flag) {
-        BufferedImage bufferedImage = null;
+        //BufferedImage bufferedImage = null;
 
-        try {
-            bufferedImage = ImageIO.read(getClass().getResource("/img/viruses/anyvirus.png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        ImageIcon icon1 = new ImageIcon("src/resources/img/viruses/anyvirus.png");
+        ImageIcon icon2 = new ImageIcon("src/resources/img/paper150.png");
 
-        Image image = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
-        ImageIcon icon = new ImageIcon(image);
+//        try {
+//            bufferedImage = ImageIO.read(getClass().getResource("/img/viruses/anyvirus.png"));
+//        } catch (IOException ex) {
+//            ex.printStackTrace();
+//        }
+
+//        Image image = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+//        ImageIcon icon = new ImageIcon(image);
 
 
         if (flag == 1) {
-            JOptionPane.showInternalMessageDialog(null, "You win! Level UP", "WIN", PLAIN_MESSAGE);
+            JOptionPane.showInternalMessageDialog(null, "You win! Level UP", "WIN", PLAIN_MESSAGE, icon2);
         } else if (flag == 2) {
-            JOptionPane.showMessageDialog(null, "GAME OVER", "Oh no!", WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "GAME OVER", "Oh no!", JOptionPane.PLAIN_MESSAGE, icon1);
         }
         else
-            JOptionPane.showMessageDialog(null, new JLabel("Viruses", icon, JLabel.LEFT), "Looser", INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Viruses", "Looser", INFORMATION_MESSAGE, icon1);
                     //"You have compiled the entire collection of viruses. You lose!",
                    // "Oops", WARNING_MESSAGE);
     }
