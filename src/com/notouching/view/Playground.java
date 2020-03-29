@@ -19,15 +19,12 @@ import static javax.swing.JOptionPane.*;
 
 public class Playground implements KeyListener {
     private GameEngine game;
-    private List<RenderedEntity> renderedEntities;
     private int mapSize;
     private int iconSize;
-    private int y;
-    private int x;
+    private List<RenderedEntity> renderedEntities;
     private JFrame frame;
     private JLabel[][] mapLabels;
     private JLabel scoreLabel;
-    private JLabel scoreValue;
     private JLabel playerLabel;
     private Image playerImage;
     private JCheckBox[] groceryBox;
@@ -35,21 +32,17 @@ public class Playground implements KeyListener {
     private JLabel sanitizerLabel;
     private JLabel[] virusesLabel;
 
-    private int groceryItem = 0;
 
-    public Playground(GameEngine game, int mapSize, int y, int x) {
+    public Playground(GameEngine game, int mapSize) {
         this.game = game;
         this.mapSize = mapSize;
         this.iconSize = 50;
-        this.y = y;
-        this.x = x;
     }
 
     public void render() {
         frame = new JFrame("No Touching!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
-
         renderedEntities = new ArrayList<>();
 
         GridLayout grid = new GridLayout(mapSize, mapSize);
@@ -60,7 +53,7 @@ public class Playground implements KeyListener {
         BufferedImage bufferedImage = null;
 
         try {
-            bufferedImage = ImageIO.read(getClass().getResource("/img/background/bg19.png"));
+            bufferedImage = ImageIO.read(getClass().getResource("/img/background/" + game.randomGenerator(3) + ".png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -80,9 +73,9 @@ public class Playground implements KeyListener {
 
         setPlayerLabel();
 
-        mapLabels[y][x].add(playerLabel);
-        mapLabels[y][x].setFocusable(true);
-        mapLabels[y][x].addKeyListener(this);
+        mapLabels[game.getPlayer().getY()][game.getPlayer().getX()].add(playerLabel);
+        mapLabels[game.getPlayer().getY()][game.getPlayer().getX()].setFocusable(true);
+        mapLabels[game.getPlayer().getY()][game.getPlayer().getX()].addKeyListener(this);
         renderPeople();
         renderFood();
         renderSanitizers();
@@ -247,14 +240,7 @@ public class Playground implements KeyListener {
     public void updateGroceryList(int i) {
         if (!groceryBox[i].isSelected()) {
             groceryBox[i].setSelected(true);
-            groceryItem += 1;
-            if (groceryItem == game.getGrocery().size()) {
-                game.setStatus(false);
-                gameMessage(1);
-                renderedEntities.clear();
-                frame.dispose();
-                game.clear();
-            }
+            game.setFoundItems(game.getFoundItems() + 1);
         }
     }
 
@@ -279,23 +265,15 @@ public class Playground implements KeyListener {
     }
 
     public void gameMessage(int flag) {
-        //BufferedImage bufferedImage = null;
 
-        ImageIcon icon1 = new ImageIcon("src/resources/img/viruses/anyvirus.png");
-        ImageIcon icon2 = new ImageIcon("src/resources/img/paper150.png");
-
-//        try {
-//            bufferedImage = ImageIO.read(getClass().getResource("/img/viruses/anyvirus.png"));
-//        } catch (IOException ex) {
-//            ex.printStackTrace();
-//        }
-
-//        Image image = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
-//        ImageIcon icon = new ImageIcon(image);
+        ImageIcon icon1 = new ImageIcon("src/resources/img/background/virus.png");
+        ImageIcon icon2 = new ImageIcon("src/resources/img/background/paper.png");
 
 
         if (flag == 1) {
             JOptionPane.showInternalMessageDialog(null, "You win! Level UP", "WIN", PLAIN_MESSAGE, icon2);
+            renderedEntities.clear();
+            frame.dispose();
         } else if (flag == 2) {
             JOptionPane.showMessageDialog(null, "GAME OVER", "Oh no!", JOptionPane.PLAIN_MESSAGE, icon1);
         }

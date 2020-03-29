@@ -19,6 +19,7 @@ public class GameEngine implements Visitor {
     private Playground playground;
     private int mapSize;
     private int speed;
+    private int foundItems;
     private volatile boolean isThreadRunning = false;
     private int skipCount;
 
@@ -29,12 +30,13 @@ public class GameEngine implements Visitor {
 
     public void play() {
         setStatus(true);
+        foundItems = 0;
         setPeople();
         setFood();
         setSanitizers();
         setGrocery();
         speed = 1000 / player.getLevel();
-        playground = new Playground(this, mapSize, player.getY(), player.getX());
+        playground = new Playground(this, mapSize);
         playground.render();
 
         new Thread(new Runnable() {
@@ -234,6 +236,14 @@ public class GameEngine implements Visitor {
         }
     }
 
+    public void isWin() {
+        if (foundItems == getGrocery().size()) {
+            setStatus(false);
+            playground.gameMessage(1);
+            clear();
+        }
+    }
+
     public boolean isOccupied(int y, int x) {
         for (GameEntity entity : entities) {
             if (entity.getY() == y && entity.getX() == x) {
@@ -278,6 +288,7 @@ public class GameEngine implements Visitor {
             player.setX(x);
 
             playground.renderPlayer(oldY, oldX, y, x);
+            isWin();
         }
     }
 
@@ -324,19 +335,23 @@ public class GameEngine implements Visitor {
     @Override
     public void interact(People people) {
         if (player.getSanitizer() == 0) {
+            player.setViruses(people.getVirus());
             if (player.getHealth() - people.getVirus().getDamage() > 0) {
                 player.setHealth(player.getHealth() - people.getVirus().getDamage());
-                player.setViruses(people.getVirus());
                 playground.updateHealth(player.getHealth());
+                setViruses(people.getVirus());
             }
             else {
                 player.setHealth(0);
-                player.setViruses(people.getVirus());
+                //player.setViruses(people.getVirus());
+                setViruses(people.getVirus());
                 playground.updateHealth(0);
-                setStatus(false);
-                playground.gameMessage(2);
+
+                if (status) {
+                    setStatus(false);
+                    playground.gameMessage(2);
+                }
             }
-            setViruses(people.getVirus());
         }
         else {
             player.setSanitizer(player.getSanitizer() - 1);
@@ -369,4 +384,11 @@ public class GameEngine implements Visitor {
         playground.removeEntity(sanitizer.getY(), sanitizer.getX());
     }
 
+    public int getFoundItems() {
+        return foundItems;
+    }
+
+    public void setFoundItems(int foundItems) {
+        this.foundItems = foundItems;
+    }
 }
