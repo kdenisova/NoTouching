@@ -6,7 +6,7 @@ import java.util.List;
 public class Player {
     private List<Virus> viruses;
     private int level;
-    private int experience;
+    private int score;
     private int health;
     private int sanitizer;
     private int y;
@@ -14,7 +14,7 @@ public class Player {
 
     public Player(int y, int x) {
         this.level = 1;
-        this.experience = 0;
+        this.score = 0;
         this.health = 100;
         this.sanitizer = 1;
         this.y = y;
@@ -29,12 +29,12 @@ public class Player {
         this.level = level;
     }
 
-    public int getExperience() {
-        return experience;
+    public int getScore() {
+        return score;
     }
 
-    public void setExperience(int experience) {
-        this.experience = experience;
+    public void setScore(int score) {
+        this.score = score;
     }
 
     public int getHealth() {

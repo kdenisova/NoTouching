@@ -5,12 +5,12 @@ import com.notouching.controller.Visitor;
 
 public class Food extends GameEntity implements Interaction {
     private FoodType type;
-    int points;
+    int score;
 
-    public Food(FoodType type, int points, int y, int x) {
+    public Food(FoodType type, int score, int y, int x) {
         super(EntityType.FOOD, y, x);
         this.type = type;
-        this.points = points;
+        this.score = score;
     }
 
     public FoodType getType() {
@@ -21,10 +21,10 @@ public class Food extends GameEntity implements Interaction {
         this.type = type;
     }
 
-    public int getPoints() { return points; }
+    public int getScore() { return score; }
 
-    public void setPoints(int points) {
-        this.points = points;
+    public void setScore(int score) {
+        this.score = score;
     }
 
     @Override

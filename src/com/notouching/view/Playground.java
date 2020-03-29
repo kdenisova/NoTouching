@@ -26,11 +26,11 @@ public class Playground implements KeyListener {
     private int x;
     private JFrame frame;
     private JLabel[][] mapLabels;
-    private JLabel experienceLabel;
+    private JLabel scoreLabel;
+    private JLabel scoreValue;
     private JLabel playerLabel;
     private Image playerImage;
     private JCheckBox[] groceryBox;
-    private JLabel levelLabel;
     private JLabel healthLabel;
     private JLabel sanitizerLabel;
     private JLabel[] virusesLabel;
@@ -97,23 +97,30 @@ public class Playground implements KeyListener {
         Dimension labelSize = new Dimension(300, 300);
 
         //Border solidBorder = BorderFactory.createLineBorder(Color.BLACK, 1);
+        Font font = new Font("Verdana", Font.PLAIN, 15);
 
         JLabel pictureLabel = new JLabel(new ImageIcon(playerImage));
         pictureLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        levelLabel = new JLabel("Level: " + game.getPlayer().getLevel());
+        JLabel levelLabel = new JLabel("Level: " + game.getPlayer().getLevel());
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        experienceLabel = new JLabel("Experience: " + game.getPlayer().getExperience());
-        experienceLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        levelLabel.setFont(font);
+
+
+
+        scoreLabel = new JLabel("Score: " + game.getPlayer().getScore());
+        scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        scoreLabel.setFont(font);
+
         healthLabel = new JLabel("Health: " + game.getPlayer().getHealth());
         healthLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        healthLabel.setFont(font);
         sanitizerLabel = new JLabel("Amount of sanitizers: " + game.getPlayer().getSanitizer());
         sanitizerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        sanitizerLabel.setFont(font);
 
         JPanel rulesPanel = new JPanel();
         rulesPanel.setLayout(new GridLayout(5, 1));
         rulesPanel.setBorder(BorderFactory.createTitledBorder("Rules"));
-
-        Font font = new Font("Verdana", Font.PLAIN, 15);
 
         JLabel rule0 = new JLabel(" ");
         JLabel rule1 = new JLabel("Find all product from the grocery list.", JLabel.CENTER);
@@ -148,7 +155,7 @@ public class Playground implements KeyListener {
         rulesPanel.add(rule3);
         infoPanel.add(pictureLabel);
         infoPanel.add(levelLabel);
-        infoPanel.add(experienceLabel);
+        infoPanel.add(scoreLabel);
         infoPanel.add(healthLabel);
         infoPanel.add(sanitizerLabel);
         infoPanel.add(rulesPanel);
@@ -233,8 +240,8 @@ public class Playground implements KeyListener {
         }
     }
 
-    public void updateFood(int experience) {
-        experienceLabel.setText("Experience: " + experience);
+    public void updateScore(int score) {
+        scoreLabel.setText("Score: " + score);
     }
 
     public void updateGroceryList(int i) {
@@ -256,7 +263,7 @@ public class Playground implements KeyListener {
     }
 
     public void updateSanitizer(int sanitizer) {
-        sanitizerLabel.setText("Amount of sanitizers:  " + sanitizer);
+        sanitizerLabel.setText("Amount of sanitizers: " + sanitizer);
     }
 
     public void setPlayerLabel() {
