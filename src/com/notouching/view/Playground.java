@@ -138,6 +138,7 @@ public class Playground implements KeyListener {
         rulesLabel.setFont(font);
         rulesPanel.add(rulesLabel);
         infoPanel.add(pictureLabel);
+        infoPanel.add(levelLabel);
         infoPanel.add(experienceLabel);
         infoPanel.add(healthLabel);
         infoPanel.add(sanitizerLabel);
@@ -158,7 +159,7 @@ public class Playground implements KeyListener {
         infoPanel.add(groceryPanel);
 
         JPanel virusPanel = new JPanel(new GridLayout());
-        virusPanel.setBorder(BorderFactory.createTitledBorder("Virus Collections"));
+        virusPanel.setBorder(BorderFactory.createTitledBorder("Virus Collection"));
 
         virusesLabel = new JLabel[5];
 
@@ -224,7 +225,11 @@ public class Playground implements KeyListener {
             groceryItem += 1;
             if (groceryItem == game.getGrocery().size()) {
                 game.setStatus(false);
+                game.getPlayer().setLevel(game.getPlayer().getLevel() + 1);
+                //updateLevel(game.getPlayer().getLevel());
                 gameMessage(1);
+                //frame.dispose();
+                //game.clear();
             }
         }
     }
@@ -236,6 +241,10 @@ public class Playground implements KeyListener {
     public void updateSanitizer(int sanitizer) {
         sanitizerLabel.setText("Amount of sanitizers:  " + sanitizer);
     }
+
+//    public void updateLevel(int level) {
+//        levelLabel.setText("Level: " + level);
+//    }
 
     public void setPlayerLabel() {
         BufferedImage bufferedPlayerImage = null;

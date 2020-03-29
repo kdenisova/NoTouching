@@ -22,11 +22,24 @@ public class GameEngine implements Visitor {
     private Playground playground;
     private int mapSize;
 
-
-    public void Play() throws InterruptedException {
-        setStatus(true);
+    public GameEngine() {
         setMapSize(15);
-        player = new Player(mapSize / 2, mapSize / 2);
+        this.player = new Player(mapSize / 2, mapSize / 2);
+    }
+
+    public void clear() {
+        player.setLevel(player.getLevel() + 1);
+        entities = null;
+        people = null;
+        grocery = null;
+        sanitizers = null;
+        viruses = null;
+        playground = null;
+        play();
+    }
+
+    public void play() {
+        setStatus(true);
         setPeople();
         setFood();
         setSanitizers();
