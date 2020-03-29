@@ -171,6 +171,7 @@ public class Playground implements KeyListener {
         infoPanel.add(virusPanel);
         frame.add(BorderLayout.CENTER, infoPanel);
 
+
         frame.setBounds(50, 50, mapSize * (iconSize - 10) * 2, mapSize * iconSize);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize(); //Set a window on center of screen
         int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
