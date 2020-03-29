@@ -3,6 +3,7 @@ package com.notouching.controller;
 import com.notouching.model.*;
 import com.notouching.view.Playground;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -23,7 +24,6 @@ public class GameEngine implements Visitor {
 
 
     public void Play() throws InterruptedException {
-        int y, x;
         setStatus(true);
         setMapSize(15);
         player = new Player(mapSize / 2, mapSize / 2);
@@ -34,35 +34,55 @@ public class GameEngine implements Visitor {
         playground = new Playground(this, people, mapSize, player.getY(), player.getX());
         playground.render();
 
-        while (status) {
-            for (People person : people) {
-                y = randomGenerator(2);
-                x = randomGenerator(2);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (status) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            int y, x;
+                            for (People person : people) {
+                                y = randomGenerator(2);
+                                x = randomGenerator(2);
 
-                if (y == 0)
-                    y = person.getY() - 1;
-                else
-                    y = person.getY() + 1;
+                                if (y == 0)
+                                    y = person.getY() - 1;
+                                else
+                                    y = person.getY() + 1;
 
-                if (x == 0)
-                    x = person.getX() - 1;
-                else
-                    x = person.getX() + 1;
+                                if (x == 0)
+                                    x = person.getX() - 1;
+                                else
+                                    x = person.getX() + 1;
 
-                if (!isOccupied(y, x) && (x >= 0 && x < mapSize) && (y >= 0 && y < mapSize)) {
-                    int oldY = person.getY();
-                    int oldX = person.getX();
+                                if (!isOccupied(y, x) && (x >= 0 && x < mapSize) && (y >= 0 && y < mapSize)) {
+                                    int oldY = person.getY();
+                                    int oldX = person.getX();
 
-                    playground.renderEntity(oldY, oldX, y, x);
-                    person.setY(y);
-                    person.setX(x);
+                                    playground.renderEntity(oldY, oldX, y, x);
+
+                                    person.setY(y);
+                                    person.setX(x);
+
+                                    if (y == player.getY() && x == player.getX())
+                                        interact(person);
+                                }
+                            }
+                        }
+                    });
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
-
             }
+        }).start();
             //TimeUnit.MILLISECONDS.sleep(1000);
-            TimeUnit.SECONDS.sleep(1);
+            //TimeUnit.SECONDS.sleep(1);
 
-        }
     }
 
     public int getMapSize() {

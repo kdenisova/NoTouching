@@ -123,7 +123,6 @@ public class Playground implements KeyListener {
                 "Caution, some products may be infected!</html><br>";
 
         //Border solidBorder = BorderFactory.createRaisedSoftBevelBorder();
-
         JLabel rulesLabel = new JLabel(listText);
         rulesLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         rulesLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -150,6 +149,7 @@ public class Playground implements KeyListener {
         for (int i = 0; i < game.getGrocery().size(); i++) {
             groceryBox[i] = new JCheckBox(String.valueOf(game.getGrocery().get(i).getType()));
             groceryBox[i].setEnabled(false);
+            groceryBox[i].setFont(font);
             groceryPanel.add(groceryBox[i]);
         }
 
