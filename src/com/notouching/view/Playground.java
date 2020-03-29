@@ -60,7 +60,7 @@ public class Playground implements KeyListener {
         BufferedImage bufferedImage = null;
 
         try {
-            bufferedImage = ImageIO.read(getClass().getResource("/img/background/bg7.png"));
+            bufferedImage = ImageIO.read(getClass().getResource("/img/background/bg15.png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
