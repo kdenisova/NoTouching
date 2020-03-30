@@ -241,10 +241,9 @@ public class Playground implements KeyListener {
     }
 
     public void gameMessage(int flag) {
-
-        ImageIcon icon1 = new ImageIcon("src/resources/img/background/virus.png");
-        ImageIcon icon2 = new ImageIcon("src/resources/img/background/paper.png");
-        ImageIcon icon3 = new ImageIcon("src/resources/img/player/player80.png");
+        ImageIcon icon1 = new ImageIcon(getClass().getResource("/img/background/virus.png"));
+        ImageIcon icon2 = new ImageIcon(getClass().getResource("/img/background/paper.png"));
+        ImageIcon icon3 = new ImageIcon(getClass().getResource("/img/player/player80.png"));
 
 
         if (flag == 1) {

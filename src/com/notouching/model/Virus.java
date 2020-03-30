@@ -1,8 +1,5 @@
 package com.notouching.model;
 
-import com.notouching.controller.Interaction;
-import com.notouching.controller.Visitor;
-
 public class Virus extends GameEntity {
     private VirusType type;
     private int damage;

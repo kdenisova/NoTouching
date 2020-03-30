@@ -20,8 +20,8 @@ public class GameEngine implements Visitor {
     private int mapSize;
     private int speed;
     private int foundItems;
-    private volatile boolean isThreadRunning = false;
     private int skipCount;
+    private volatile boolean isThreadRunning = false;
 
     public GameEngine() {
         this.mapSize = 15;
@@ -185,7 +185,6 @@ public class GameEngine implements Visitor {
         this.sanitizers = new ArrayList<>();
 
         int y, x;
-        //mapSize / 5 + player.getLevel()
         for (int i = 0; i < player.getLevel() % 5 + 1; i++) {
             y = randomGenerator(mapSize);
             x = randomGenerator(mapSize);
@@ -347,7 +346,6 @@ public class GameEngine implements Visitor {
             }
             else {
                 player.setHealth(0);
-                //player.setViruses(people.getVirus());
                 setViruses(people.getVirus());
                 playground.updateHealth(0);
 
