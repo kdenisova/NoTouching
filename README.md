@@ -1,4 +1,4 @@
-# NoTouching
+# No Touching
 
 [No Touching](https://kdenisov.itch.io/no-touching) is a Quarantine Game developed for [42 Silicon Valley Quarantine Game Jam Extravaganza](https://itch.io/jam/42svgamejam) during the pandemic.
 
@@ -26,6 +26,6 @@ Finish all 10 levels of the game and became a Symbol of Quarantine.
 
 ![alt text](/screenshots/2.jpeg)
 
-![alt text](/screenshots/3.jpeg)
-
 ![alt text](/screenshots/4.jpeg)
+
+![alt text](/screenshots/3.jpeg)
