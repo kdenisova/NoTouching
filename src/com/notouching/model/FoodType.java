@@ -11,7 +11,7 @@ public enum FoodType {
     Grape,
     Broccoli,
     Fish,
-    Ananas,
+    Pineapple,
     Watermelon,
     Sandwich,
     Lemon,

@@ -10,18 +10,17 @@ import java.util.List;
 public class GameEngine implements Visitor {
     private boolean status;
     private List<GameEntity> entities = new ArrayList<>();
-    private Player player;
+    private final Player player;
     private List<People> people;
     private List<Food> food;
     private List<Food> grocery;
     private List<Sanitizer> sanitizers;
     private List<Virus> viruses;
     private Playground playground;
-    private int mapSize;
+    private final int mapSize;
     private int speed;
     private int foundItems;
     private int skipCount;
-    private volatile boolean isThreadRunning = false;
 
     public GameEngine() {
         this.mapSize = 15;
@@ -36,13 +35,13 @@ public class GameEngine implements Visitor {
         setSanitizers();
         setGrocery();
         speed = 1000 / player.getLevel();
+
         playground = new Playground(this, mapSize);
         playground.render();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                isThreadRunning = true;
 
                 while (status) {
                     SwingUtilities.invokeLater(new Runnable() {
@@ -92,14 +91,13 @@ public class GameEngine implements Visitor {
                 }
             }
         }).start();
-        if (!status)
-            isThreadRunning = false;
     }
 
     public void clear() {
         player.setLevel(player.getLevel() + 1);
         player.setY(mapSize / 2);
         player.setX(mapSize / 2);
+
         entities.clear();
         people.clear();
         food.clear();
@@ -129,6 +127,7 @@ public class GameEngine implements Visitor {
                 x = randomGenerator(mapSize);
                 y = randomGenerator(mapSize);
             }
+
             People person = new People(new Virus(VirusType.getRandomVirus(), y, x), y, x);
             this.people.add(person);
             entities.add(person);
@@ -185,6 +184,7 @@ public class GameEngine implements Visitor {
         this.sanitizers = new ArrayList<>();
 
         int y, x;
+
         for (int i = 0; i < player.getLevel() % 5 + 1; i++) {
             y = randomGenerator(mapSize);
             x = randomGenerator(mapSize);
@@ -193,6 +193,7 @@ public class GameEngine implements Visitor {
                 x = randomGenerator(mapSize);
                 y = randomGenerator(mapSize);
             }
+
             Sanitizer sanitizer = new Sanitizer(EntityType.SANITIZER, y, x);
             this.sanitizers.add(sanitizer);
             entities.add(sanitizer);
@@ -210,10 +211,6 @@ public class GameEngine implements Visitor {
             if (this.viruses.size() == 3)
                 setStatus(false);
         }
-    }
-
-    public void setSkipCount(int skipCount) {
-        this.skipCount = skipCount;
     }
 
     public void checkEntity(int y, int x) {
@@ -238,6 +235,7 @@ public class GameEngine implements Visitor {
     public void isWin() {
         if (foundItems == getGrocery().size()) {
             setStatus(false);
+
             if (player.getLevel() + 1 <= 10) {
                 playground.gameMessage(1);
                 clear();
@@ -327,6 +325,10 @@ public class GameEngine implements Visitor {
         return skipCount;
     }
 
+    public int getFoundItems() {
+        return foundItems;
+    }
+
     public boolean isStatus() {
         return status;
     }
@@ -335,10 +337,17 @@ public class GameEngine implements Visitor {
         this.status = status;
     }
 
+    public void setSkipCount(int skipCount) {
+        this.skipCount = skipCount;
+    }
+
+    public void setFoundItems(int foundItems) {
+        this.foundItems = foundItems;
+    }
+
     @Override
     public void interact(People people) {
         if (player.getSanitizer() == 0) {
-            player.setViruses(people.getVirus());
             if (player.getHealth() - people.getVirus().getDamage() > 0) {
                 player.setHealth(player.getHealth() - people.getVirus().getDamage());
                 playground.updateHealth(player.getHealth());
@@ -384,13 +393,5 @@ public class GameEngine implements Visitor {
         player.setSanitizer(player.getSanitizer() + 1);
         playground.updateSanitizer(player.getSanitizer());
         playground.removeEntity(sanitizer.getY(), sanitizer.getX());
-    }
-
-    public int getFoundItems() {
-        return foundItems;
-    }
-
-    public void setFoundItems(int foundItems) {
-        this.foundItems = foundItems;
     }
 }

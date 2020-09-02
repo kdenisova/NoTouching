@@ -107,21 +107,22 @@ public class Playground implements KeyListener {
         sanitizerLabel.setFont(font);
 
         JPanel rulesPanel = new JPanel();
-        rulesPanel.setLayout(new GridLayout(5, 1));
+        rulesPanel.setLayout(new GridLayout(4, 1));
         rulesPanel.setBorder(BorderFactory.createTitledBorder("Rules"));
 
-        JLabel rule0 = new JLabel(" ");
         JLabel rule1 = new JLabel("Find all product from the grocery list.", JLabel.CENTER);
         rule1.setFont(font);
-        JLabel rule2 = new JLabel("And remember...", JLabel.CENTER);
+        JLabel rule2 = new JLabel("Collect sanitizers to prevent infection", JLabel.CENTER);
         rule2.setFont(font);
-        JLabel rule3 = new JLabel("NO TOUCHING!", JLabel.CENTER);
+        JLabel rule3 = new JLabel("And remember...", JLabel.CENTER);
         rule3.setFont(font);
+        JLabel rule4 = new JLabel("NO TOUCHING!", JLabel.CENTER);
+        rule4.setFont(font);
 
-        rulesPanel.add(rule0);
         rulesPanel.add(rule1);
         rulesPanel.add(rule2);
         rulesPanel.add(rule3);
+        rulesPanel.add(rule4);
         infoPanel.add(pictureLabel);
         infoPanel.add(levelLabel);
         infoPanel.add(scoreLabel);
