@@ -19,8 +19,8 @@ import static javax.swing.JOptionPane.*;
 
 public class Playground implements KeyListener {
     private GameEngine game;
-    private int mapSize;
-    private int iconSize;
+    private final int mapSize;
+    private final int iconSize;
     private List<RenderedEntity> renderedEntities;
     private JFrame frame;
     private JLabel[][] mapLabels;
@@ -45,6 +45,7 @@ public class Playground implements KeyListener {
         frame.setResizable(false);
         renderedEntities = new ArrayList<>();
 
+        //render map
         GridLayout grid = new GridLayout(mapSize, mapSize);
 
         JPanel mapPanel = new JPanel(grid);
@@ -58,6 +59,7 @@ public class Playground implements KeyListener {
             ex.printStackTrace();
         }
 
+        assert bufferedImage != null;
         Image image = bufferedImage.getScaledInstance(iconSize, iconSize + 10, Image.SCALE_SMOOTH);
         ImageIcon icon = new ImageIcon(image);
 
@@ -71,18 +73,21 @@ public class Playground implements KeyListener {
             }
         }
 
+        //render player
         setPlayerLabel();
-
         mapLabels[game.getPlayer().getY()][game.getPlayer().getX()].add(playerLabel);
         mapLabels[game.getPlayer().getY()][game.getPlayer().getX()].setFocusable(true);
         mapLabels[game.getPlayer().getY()][game.getPlayer().getX()].addKeyListener(this);
+
+        //render game entities
         renderPeople();
         renderFood();
         renderSanitizers();
 
+        //render panels
         frame.add(BorderLayout.WEST, mapPanel);
 
-
+        //player info
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         infoPanel.setBorder(BorderFactory.createTitledBorder("Credentials"));
@@ -91,6 +96,7 @@ public class Playground implements KeyListener {
 
         JLabel pictureLabel = new JLabel(new ImageIcon(playerImage));
         pictureLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JLabel levelLabel = new JLabel("Level: " + game.getPlayer().getLevel());
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         levelLabel.setFont(font);
@@ -102,10 +108,18 @@ public class Playground implements KeyListener {
         healthLabel = new JLabel("Health: " + game.getPlayer().getHealth());
         healthLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         healthLabel.setFont(font);
+
         sanitizerLabel = new JLabel("Amount of sanitizers: " + game.getPlayer().getSanitizer());
         sanitizerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         sanitizerLabel.setFont(font);
 
+        infoPanel.add(pictureLabel);
+        infoPanel.add(levelLabel);
+        infoPanel.add(scoreLabel);
+        infoPanel.add(healthLabel);
+        infoPanel.add(sanitizerLabel);
+
+        //rules
         JPanel rulesPanel = new JPanel();
         rulesPanel.setLayout(new GridLayout(4, 1));
         rulesPanel.setBorder(BorderFactory.createTitledBorder("Rules"));
@@ -123,13 +137,10 @@ public class Playground implements KeyListener {
         rulesPanel.add(rule2);
         rulesPanel.add(rule3);
         rulesPanel.add(rule4);
-        infoPanel.add(pictureLabel);
-        infoPanel.add(levelLabel);
-        infoPanel.add(scoreLabel);
-        infoPanel.add(healthLabel);
-        infoPanel.add(sanitizerLabel);
+
         infoPanel.add(rulesPanel);
 
+        //grocery list
         JPanel groceryPanel = new JPanel();
         groceryPanel.setBorder(BorderFactory.createTitledBorder("Grocery List"));
 
@@ -144,6 +155,7 @@ public class Playground implements KeyListener {
 
         infoPanel.add(groceryPanel);
 
+        //viruses
         JPanel virusPanel = new JPanel(new GridLayout());
         virusPanel.setBorder(BorderFactory.createTitledBorder("Virus Collection"));
 
@@ -166,13 +178,112 @@ public class Playground implements KeyListener {
         infoPanel.add(virusPanel);
         frame.add(BorderLayout.CENTER, infoPanel);
 
-
+        //frame settings
         frame.setBounds(50, 50, mapSize * (iconSize - 10) * 2, mapSize * iconSize);
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize(); //Set a window on center of screen
         int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
         int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
         frame.setLocation(x, y);
         frame.setVisible(true);
+    }
+
+    public void renderPlayer(int oldY, int oldX, int newY, int newX) {
+        mapLabels[oldY][oldX].remove(playerLabel);
+
+        frame.revalidate();
+        frame.repaint();
+
+        mapLabels[oldY][oldX].revalidate();
+        mapLabels[oldY][oldX].repaint();
+
+        playerLabel = new JLabel(new ImageIcon(playerImage));
+        mapLabels[newY][newX].add(playerLabel);
+    }
+
+    public void renderPeople() {
+        BufferedImage bufferedImage = null;
+        Image image;
+        JLabel label;
+
+        for (int i = 0; i < game.getPeople().size(); i++) {
+
+            try {
+                bufferedImage = ImageIO.read(getClass().getResource("/img/people/" + (i % 6) + ".png"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            assert bufferedImage != null;
+            image = bufferedImage.getScaledInstance(iconSize - 10, iconSize - 10, Image.SCALE_SMOOTH);
+            label = new JLabel(new ImageIcon(image));
+
+            mapLabels[game.getPeople().get(i).getY()][game.getPeople().get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, image, game.getPeople().get(i)));
+        }
+    }
+
+    public void renderFood() {
+        BufferedImage bufferedImage = null;
+        Image image;
+        JLabel label;
+
+        for (int i = 0; i < game.getFood().size(); i++) {
+
+            try {
+                bufferedImage = ImageIO.read(getClass().getResource("/img/food/" + game.getFood().get(i).getType() + ".png"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            assert bufferedImage != null;
+            image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
+            label = new JLabel(new ImageIcon(image));
+
+            mapLabels[game.getFood().get(i).getY()][game.getFood().get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, image, game.getFood().get(i)));
+        }
+    }
+
+    public void renderSanitizers() {
+        BufferedImage bufferedImage = null;
+        Image image;
+        JLabel label;
+
+        for (int i = 0; i < game.getSanitizers().size(); i++) {
+
+            try {
+                bufferedImage = ImageIO.read(getClass().getResource("/img/sanitizers/" + (i % 6) + ".png"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+
+            assert bufferedImage != null;
+            image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
+            label = new JLabel(new ImageIcon(image));
+
+            mapLabels[game.getSanitizers().get(i).getY()][game.getSanitizers().get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, image, game.getSanitizers().get(i)));
+        }
+    }
+
+    public void renderVirus(VirusType type, int i) {
+        BufferedImage bufferedImage = null;
+
+        try {
+            bufferedImage = ImageIO.read(getClass().getResource("/img/viruses/" + type + ".png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+
+        assert bufferedImage != null;
+        Image virusImage = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
+        ImageIcon virusIcon = new ImageIcon(virusImage);
+        virusesLabel[i].setIcon(virusIcon);
+
+        if (i == 3 && game.isStatus()) {
+            game.setStatus(false);
+            gameMessage(3);
+        }
     }
 
     public void removeEntity(int y, int x) {
@@ -192,9 +303,9 @@ public class Playground implements KeyListener {
     }
 
     public void movePeople(int oldY, int oldX, int newY, int newX) {
-        for (int i = 0; i < renderedEntities.size(); i++) {
-            if (oldY == renderedEntities.get(i).getEntity().getY() && oldX == renderedEntities.get(i).getEntity().getX()) {
-                mapLabels[oldY][oldX].remove(renderedEntities.get(i).getLabel());
+        for (RenderedEntity renderedEntity : renderedEntities) {
+            if (oldY == renderedEntity.getEntity().getY() && oldX == renderedEntity.getEntity().getX()) {
+                mapLabels[oldY][oldX].remove(renderedEntity.getLabel());
 
                 frame.revalidate();
                 frame.repaint();
@@ -202,8 +313,8 @@ public class Playground implements KeyListener {
                 mapLabels[oldY][oldX].revalidate();
                 mapLabels[oldY][oldX].repaint();
 
-                renderedEntities.get(i).setLabel(new JLabel(new ImageIcon(renderedEntities.get(i).getImage())));
-                mapLabels[newY][newX].add(renderedEntities.get(i).getLabel());
+                renderedEntity.setLabel(new JLabel(new ImageIcon(renderedEntity.getImage())));
+                mapLabels[newY][newX].add(renderedEntity.getLabel());
 
                 break;
             }
@@ -237,6 +348,7 @@ public class Playground implements KeyListener {
             ex.printStackTrace();
         }
 
+        assert bufferedPlayerImage != null;
         playerImage = bufferedPlayerImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
         playerLabel = new JLabel(new ImageIcon(playerImage));
     }
@@ -246,113 +358,25 @@ public class Playground implements KeyListener {
         ImageIcon icon2 = new ImageIcon(getClass().getResource("/img/background/paper.png"));
         ImageIcon icon3 = new ImageIcon(getClass().getResource("/img/player/player80.png"));
 
-
         if (flag == 1) {
-            JOptionPane.showInternalMessageDialog(null, "Level " + (game.getPlayer().getLevel() + 1), "Level Up", PLAIN_MESSAGE, icon2);
+            JOptionPane.showInternalMessageDialog(null,
+                    "Level " + (game.getPlayer().getLevel() + 1),
+                    "Level Up", PLAIN_MESSAGE, icon2);
+
             renderedEntities.clear();
             frame.dispose();
         } else if (flag == 2) {
-            JOptionPane.showMessageDialog(null, "Too many touching!", "GAME OVER", JOptionPane.PLAIN_MESSAGE, icon1);
+            JOptionPane.showMessageDialog(null,
+                    "Too many touching!",
+                    "GAME OVER", JOptionPane.PLAIN_MESSAGE, icon1);
         } else if (flag == 3) {
-            JOptionPane.showMessageDialog(null, "Viruses win this round!", "Virus collection is full", INFORMATION_MESSAGE, icon1);
+            JOptionPane.showMessageDialog(null,
+                    "Viruses win this round!",
+                    "GAME OVER: Virus collection is full", INFORMATION_MESSAGE, icon1);
         } else
-            JOptionPane.showMessageDialog(null, "You win and became a symbol of quarantine!",
+            JOptionPane.showMessageDialog(null,
+                    "You win and became a symbol of quarantine!",
                     "Good job!", JOptionPane.PLAIN_MESSAGE, icon3);
-    }
-
-    public void renderPlayer(int oldY, int oldX, int newY, int newX) {
-        mapLabels[oldY][oldX].remove(playerLabel);
-
-        frame.revalidate();
-        frame.repaint();
-
-        mapLabels[oldY][oldX].revalidate();
-        mapLabels[oldY][oldX].repaint();
-
-        playerLabel = new JLabel(new ImageIcon(playerImage));
-        mapLabels[newY][newX].add(playerLabel);
-    }
-
-    public void renderPeople() {
-        BufferedImage bufferedImage = null;
-        Image image;
-        JLabel label;
-
-        for (int i = 0; i < game.getPeople().size(); i++) {
-
-            try {
-                bufferedImage = ImageIO.read(getClass().getResource("/img/people/" + (i % 6) + ".png"));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            image = bufferedImage.getScaledInstance(iconSize - 10, iconSize - 10, Image.SCALE_SMOOTH);
-            label = new JLabel(new ImageIcon(image));
-
-            mapLabels[game.getPeople().get(i).getY()][game.getPeople().get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, image, game.getPeople().get(i)));
-        }
-    }
-
-    public void renderFood() {
-        BufferedImage bufferedImage = null;
-        Image image;
-        JLabel label;
-
-        for (int i = 0; i < game.getFood().size(); i++) {
-
-            try {
-                bufferedImage = ImageIO.read(getClass().getResource("/img/food/" + game.getFood().get(i).getType() + ".png"));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
-            label = new JLabel(new ImageIcon(image));
-
-            mapLabels[game.getFood().get(i).getY()][game.getFood().get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, image, game.getFood().get(i)));
-        }
-    }
-
-    public void renderSanitizers() {
-        BufferedImage bufferedImage = null;
-        Image image;
-        JLabel label;
-
-        for (int i = 0; i < game.getSanitizers().size(); i++) {
-
-            try {
-                bufferedImage = ImageIO.read(getClass().getResource("/img/sanitizers/" + (i % 6) + ".png"));
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
-            label = new JLabel(new ImageIcon(image));
-
-            mapLabels[game.getSanitizers().get(i).getY()][game.getSanitizers().get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, image, game.getSanitizers().get(i)));
-        }
-    }
-
-    public void renderVirus(VirusType type, int i) {
-        BufferedImage bufferedImage = null;
-
-        try {
-            bufferedImage = ImageIO.read(getClass().getResource("/img/viruses/" + type + ".png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-
-        Image virusImage = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
-        ImageIcon virusIcon = new ImageIcon(virusImage);
-        virusesLabel[i].setIcon(virusIcon);
-
-        if (i == 3 && game.isStatus()) {
-            game.setStatus(false);
-            gameMessage(3);
-        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-import com.notouching.controller.GameEngine;
+package com.notouching.controller;
 
 public class NoTouching {
     public static void main(String[] args) {

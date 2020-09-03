@@ -17,19 +17,18 @@ public class GameEngine implements Visitor {
     private List<Sanitizer> sanitizers;
     private List<Virus> viruses;
     private Playground playground;
-    private final int mapSize;
+    private final int mapSize = 15;
     private int speed;
     private int foundItems;
     private int skipCount;
 
     public GameEngine() {
-        this.mapSize = 15;
         this.player = new Player(mapSize / 2, mapSize / 2);
     }
 
     public void play() {
         setStatus(true);
-        foundItems = 0;
+        setFoundItems(0);
         setPeople();
         setFood();
         setSanitizers();
@@ -214,7 +213,6 @@ public class GameEngine implements Visitor {
     }
 
     public void checkEntity(int y, int x) {
-
         for (GameEntity entity : entities) {
             if (entity.getY() == y && entity.getX() == x) {
                 switch (entity.getEntityType()) {

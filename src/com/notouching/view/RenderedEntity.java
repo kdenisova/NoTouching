@@ -7,8 +7,8 @@ import java.awt.*;
 
 public class RenderedEntity {
     private JLabel label;
-    private Image image;
-    private GameEntity entity;
+    private final Image image;
+    private final GameEntity entity;
 
     public RenderedEntity(JLabel label, Image image, GameEntity entity) {
         this.label = label;
