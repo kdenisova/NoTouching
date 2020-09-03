@@ -5,21 +5,33 @@ import com.notouching.view.Playground;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class GameEngine implements Visitor {
-    private boolean status;
-    private List<GameEntity> entities = new ArrayList<>();
+public class GameEngine implements Visitor, ViewInteraction {
+    private final List<GameEntity> entities = new ArrayList<>();
     private final Player player;
+    private final int mapSize = 15;
+
+    private boolean status;
     private List<People> people;
     private List<Food> food;
-    private List<Food> grocery;
+    private List<Food> groceryList;
+    private Set<Food> foundItems;
     private List<Sanitizer> sanitizers;
     private List<Virus> viruses;
     private Playground playground;
-    private final int mapSize = 15;
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
     private int speed;
-    private int foundItems;
     private int skipCount;
 
     public GameEngine() {
@@ -28,15 +40,15 @@ public class GameEngine implements Visitor {
 
     public void play() {
         setStatus(true);
-        setFoundItems(0);
         setPeople();
         setFood();
         setSanitizers();
-        setGrocery();
-        speed = 1000 / player.getLevel();
+        setGroceryList();
+        setFoundItems();
+        setSpeed(1000 / player.getLevel());
 
         playground = new Playground(this, mapSize);
-        playground.render();
+        playground.render(player, groceryList, people, food, sanitizers);
 
         new Thread(new Runnable() {
             @Override
@@ -100,8 +112,9 @@ public class GameEngine implements Visitor {
         entities.clear();
         people.clear();
         food.clear();
-        grocery.clear();
+        groceryList.clear();
         sanitizers.clear();
+        foundItems.clear();
 
         if (viruses != null)
             viruses.clear();
@@ -156,7 +169,7 @@ public class GameEngine implements Visitor {
     }
 
     public boolean checkGrocery(Food food) {
-        for (Food f : grocery) {
+        for (Food f : groceryList) {
             if (f.getType() == food.getType())
                 return true;
         }
@@ -164,8 +177,8 @@ public class GameEngine implements Visitor {
         return false;
     }
 
-    public void setGrocery() {
-        this.grocery = new ArrayList<>();
+    public void setGroceryList() {
+        this.groceryList = new ArrayList<>();
         int n;
 
         for (int i = 0; i < mapSize / 3 + player.getLevel(); i++) {
@@ -175,7 +188,7 @@ public class GameEngine implements Visitor {
                 n = randomGenerator(food.size());
             }
 
-            this.grocery.add(food.get(n));
+            this.groceryList.add(food.get(n));
         }
     }
 
@@ -231,15 +244,15 @@ public class GameEngine implements Visitor {
     }
 
     public void isWin() {
-        if (foundItems == getGrocery().size()) {
+        if (foundItems.size() == getGroceryList().size()) {
             setStatus(false);
 
             if (player.getLevel() + 1 <= 10) {
-                playground.gameMessage(1);
+                playground.showMessageLevelUp(player.getLevel() + 1);
                 clear();
             }
             else
-                playground.gameMessage(0);
+                playground.showMessageWin();
         }
     }
 
@@ -252,7 +265,8 @@ public class GameEngine implements Visitor {
         return false;
     }
 
-    public void playerMoved(PlayerMove move) {
+    @Override
+    public void onPlayerMoved(PlayerMove move) {
         int y, x;
         y = player.getY();
         x = player.getX();
@@ -307,8 +321,8 @@ public class GameEngine implements Visitor {
         return food;
     }
 
-    public List<Food> getGrocery() {
-        return grocery;
+    public List<Food> getGroceryList() {
+        return groceryList;
     }
 
     public List<Sanitizer> getSanitizers() {
@@ -319,15 +333,17 @@ public class GameEngine implements Visitor {
         return viruses;
     }
 
+    @Override
     public int getSkipCount() {
         return skipCount;
     }
 
-    public int getFoundItems() {
+    public Set<Food> getFoundItems() {
         return foundItems;
     }
 
-    public boolean isStatus() {
+    @Override
+    public boolean isRunning() {
         return status;
     }
 
@@ -335,12 +351,13 @@ public class GameEngine implements Visitor {
         this.status = status;
     }
 
+    @Override
     public void setSkipCount(int skipCount) {
         this.skipCount = skipCount;
     }
 
-    public void setFoundItems(int foundItems) {
-        this.foundItems = foundItems;
+    public void setFoundItems() {
+        this.foundItems = new HashSet<>();
     }
 
     @Override
@@ -358,7 +375,7 @@ public class GameEngine implements Visitor {
 
                 if (status) {
                     setStatus(false);
-                    playground.gameMessage(2);
+                    playground.showMessageLose();
                 }
             }
         }
@@ -375,8 +392,9 @@ public class GameEngine implements Visitor {
         playground.removeEntity(food.getY(), food.getX());
         skipCount = 2;
 
-        for (int i = 0; i < grocery.size(); i++) {
-            if (grocery.get(i).getType() == food.getType()) {
+        for (int i = 0; i < groceryList.size(); i++) {
+            if (groceryList.get(i).getType() == food.getType()) {
+                foundItems.add(food);
                 playground.updateGroceryList(i);
                 break;
             }

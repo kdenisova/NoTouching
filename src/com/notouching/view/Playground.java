@@ -1,8 +1,8 @@
 package com.notouching.view;
 
-import com.notouching.controller.GameEngine;
 import com.notouching.controller.PlayerMove;
-import com.notouching.model.VirusType;
+import com.notouching.controller.ViewInteraction;
+import com.notouching.model.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.*;
 
 public class Playground implements KeyListener {
-    private GameEngine game;
+    private ViewInteraction game;
     private final int mapSize;
     private final int iconSize;
     private List<RenderedEntity> renderedEntities;
@@ -33,13 +33,13 @@ public class Playground implements KeyListener {
     private JLabel[] virusesLabel;
 
 
-    public Playground(GameEngine game, int mapSize) {
+    public Playground(ViewInteraction game, int mapSize) {
         this.game = game;
         this.mapSize = mapSize;
         this.iconSize = 50;
     }
 
-    public void render() {
+    public void render(Player player, List<Food> groceryList, List<People> people, List<Food> food, List<Sanitizer> sanitizers) {
         frame = new JFrame("No Touching!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
@@ -54,7 +54,7 @@ public class Playground implements KeyListener {
         BufferedImage bufferedImage = null;
 
         try {
-            bufferedImage = ImageIO.read(getClass().getResource("/img/background/" + game.randomGenerator(3) + ".png"));
+            bufferedImage = ImageIO.read(getClass().getResource("/img/background/" + Math.random() * 3 + ".png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -75,14 +75,14 @@ public class Playground implements KeyListener {
 
         //render player
         setPlayerLabel();
-        mapLabels[game.getPlayer().getY()][game.getPlayer().getX()].add(playerLabel);
-        mapLabels[game.getPlayer().getY()][game.getPlayer().getX()].setFocusable(true);
-        mapLabels[game.getPlayer().getY()][game.getPlayer().getX()].addKeyListener(this);
+        mapLabels[player.getY()][player.getX()].add(playerLabel);
+        mapLabels[player.getY()][player.getX()].setFocusable(true);
+        mapLabels[player.getY()][player.getX()].addKeyListener(this);
 
         //render game entities
-        renderPeople();
-        renderFood();
-        renderSanitizers();
+        renderPeople(people);
+        renderFood(food);
+        renderSanitizers(sanitizers);
 
         //render panels
         frame.add(BorderLayout.WEST, mapPanel);
@@ -97,19 +97,19 @@ public class Playground implements KeyListener {
         JLabel pictureLabel = new JLabel(new ImageIcon(playerImage));
         pictureLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel levelLabel = new JLabel("Level: " + game.getPlayer().getLevel());
+        JLabel levelLabel = new JLabel("Level: " + player.getLevel());
         levelLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         levelLabel.setFont(font);
 
-        scoreLabel = new JLabel("Score: " + game.getPlayer().getScore());
+        scoreLabel = new JLabel("Score: " + player.getScore());
         scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         scoreLabel.setFont(font);
 
-        healthLabel = new JLabel("Health: " + game.getPlayer().getHealth());
+        healthLabel = new JLabel("Health: " + player.getHealth());
         healthLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         healthLabel.setFont(font);
 
-        sanitizerLabel = new JLabel("Amount of sanitizers: " + game.getPlayer().getSanitizer());
+        sanitizerLabel = new JLabel("Amount of sanitizers: " + player.getSanitizer());
         sanitizerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         sanitizerLabel.setFont(font);
 
@@ -144,10 +144,10 @@ public class Playground implements KeyListener {
         JPanel groceryPanel = new JPanel();
         groceryPanel.setBorder(BorderFactory.createTitledBorder("Grocery List"));
 
-        groceryBox = new JCheckBox[game.getGrocery().size()];
+        groceryBox = new JCheckBox[groceryList.size()];
 
-        for (int i = 0; i < game.getGrocery().size(); i++) {
-            groceryBox[i] = new JCheckBox(String.valueOf(game.getGrocery().get(i).getType()));
+        for (int i = 0; i < groceryList.size(); i++) {
+            groceryBox[i] = new JCheckBox(String.valueOf(groceryList.get(i).getType()));
             groceryBox[i].setEnabled(false);
             groceryBox[i].setFont(font);
             groceryPanel.add(groceryBox[i]);
@@ -200,12 +200,12 @@ public class Playground implements KeyListener {
         mapLabels[newY][newX].add(playerLabel);
     }
 
-    public void renderPeople() {
+    public void renderPeople(List<People> people) {
         BufferedImage bufferedImage = null;
         Image image;
         JLabel label;
 
-        for (int i = 0; i < game.getPeople().size(); i++) {
+        for (int i = 0; i < people.size(); i++) {
 
             try {
                 bufferedImage = ImageIO.read(getClass().getResource("/img/people/" + (i % 6) + ".png"));
@@ -217,20 +217,20 @@ public class Playground implements KeyListener {
             image = bufferedImage.getScaledInstance(iconSize - 10, iconSize - 10, Image.SCALE_SMOOTH);
             label = new JLabel(new ImageIcon(image));
 
-            mapLabels[game.getPeople().get(i).getY()][game.getPeople().get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, image, game.getPeople().get(i)));
+            mapLabels[people.get(i).getY()][people.get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, image, people.get(i)));
         }
     }
 
-    public void renderFood() {
+    public void renderFood(List<Food> food) {
         BufferedImage bufferedImage = null;
         Image image;
         JLabel label;
 
-        for (int i = 0; i < game.getFood().size(); i++) {
+        for (int i = 0; i < food.size(); i++) {
 
             try {
-                bufferedImage = ImageIO.read(getClass().getResource("/img/food/" + game.getFood().get(i).getType() + ".png"));
+                bufferedImage = ImageIO.read(getClass().getResource("/img/food/" + food.get(i).getType() + ".png"));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -239,17 +239,17 @@ public class Playground implements KeyListener {
             image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
             label = new JLabel(new ImageIcon(image));
 
-            mapLabels[game.getFood().get(i).getY()][game.getFood().get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, image, game.getFood().get(i)));
+            mapLabels[food.get(i).getY()][food.get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, image, food.get(i)));
         }
     }
 
-    public void renderSanitizers() {
+    public void renderSanitizers(List<Sanitizer> sanitizers) {
         BufferedImage bufferedImage = null;
         Image image;
         JLabel label;
 
-        for (int i = 0; i < game.getSanitizers().size(); i++) {
+        for (int i = 0; i < sanitizers.size(); i++) {
 
             try {
                 bufferedImage = ImageIO.read(getClass().getResource("/img/sanitizers/" + (i % 6) + ".png"));
@@ -261,8 +261,8 @@ public class Playground implements KeyListener {
             image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
             label = new JLabel(new ImageIcon(image));
 
-            mapLabels[game.getSanitizers().get(i).getY()][game.getSanitizers().get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, image, game.getSanitizers().get(i)));
+            mapLabels[sanitizers.get(i).getY()][sanitizers.get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, image, sanitizers.get(i)));
         }
     }
 
@@ -280,9 +280,9 @@ public class Playground implements KeyListener {
         ImageIcon virusIcon = new ImageIcon(virusImage);
         virusesLabel[i].setIcon(virusIcon);
 
-        if (i == 3 && game.isStatus()) {
+        if (i == 3 && game.isRunning()) {
             game.setStatus(false);
-            gameMessage(3);
+            showMessageVirusesWin();
         }
     }
 
@@ -328,7 +328,6 @@ public class Playground implements KeyListener {
     public void updateGroceryList(int i) {
         if (!groceryBox[i].isSelected()) {
             groceryBox[i].setSelected(true);
-            game.setFoundItems(game.getFoundItems() + 1);
         }
     }
 
@@ -353,30 +352,39 @@ public class Playground implements KeyListener {
         playerLabel = new JLabel(new ImageIcon(playerImage));
     }
 
-    public void gameMessage(int flag) {
-        ImageIcon icon1 = new ImageIcon(getClass().getResource("/img/background/virus.png"));
-        ImageIcon icon2 = new ImageIcon(getClass().getResource("/img/background/paper.png"));
-        ImageIcon icon3 = new ImageIcon(getClass().getResource("/img/player/player80.png"));
+    public void showMessageLevelUp(int level) {
+        ImageIcon icon = new ImageIcon(getClass().getResource("/img/background/paper.png"));
 
-        if (flag == 1) {
-            JOptionPane.showInternalMessageDialog(null,
-                    "Level " + (game.getPlayer().getLevel() + 1),
-                    "Level Up", PLAIN_MESSAGE, icon2);
+        JOptionPane.showInternalMessageDialog(null,
+                "Level " + level,
+                "Level Up", PLAIN_MESSAGE, icon);
 
-            renderedEntities.clear();
-            frame.dispose();
-        } else if (flag == 2) {
-            JOptionPane.showMessageDialog(null,
-                    "Too many touching!",
-                    "GAME OVER", JOptionPane.PLAIN_MESSAGE, icon1);
-        } else if (flag == 3) {
-            JOptionPane.showMessageDialog(null,
-                    "Viruses win this round!",
-                    "GAME OVER: Virus collection is full", INFORMATION_MESSAGE, icon1);
-        } else
-            JOptionPane.showMessageDialog(null,
-                    "You win and became a symbol of quarantine!",
-                    "Good job!", JOptionPane.PLAIN_MESSAGE, icon3);
+        renderedEntities.clear();
+        frame.dispose();
+    }
+
+    public void showMessageWin() {
+        ImageIcon icon = new ImageIcon(getClass().getResource("/img/player/player80.png"));
+
+        JOptionPane.showMessageDialog(null,
+                "You win and became a symbol of quarantine!",
+                "Good job!", JOptionPane.PLAIN_MESSAGE, icon);
+    }
+
+    public void showMessageVirusesWin() {
+        ImageIcon icon = new ImageIcon(getClass().getResource("/img/background/virus.png"));
+
+        JOptionPane.showMessageDialog(null,
+                "Viruses win this round!",
+                "GAME OVER: Virus collection is full", INFORMATION_MESSAGE, icon);
+    }
+
+    public void showMessageLose() {
+        ImageIcon icon = new ImageIcon(getClass().getResource("/img/background/virus.png"));
+
+        JOptionPane.showMessageDialog(null,
+                "Too many touching!",
+                "GAME OVER", JOptionPane.PLAIN_MESSAGE, icon);
     }
 
     @Override
@@ -386,17 +394,17 @@ public class Playground implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (game.isStatus()) {
+        if (game.isRunning()) {
             if (game.getSkipCount() > 0)
                 game.setSkipCount(0);
             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                game.playerMoved(PlayerMove.DOWN);
+                game.onPlayerMoved(PlayerMove.DOWN);
             } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                game.playerMoved(PlayerMove.UP);
+                game.onPlayerMoved(PlayerMove.UP);
             } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                game.playerMoved(PlayerMove.LEFT);
+                game.onPlayerMoved(PlayerMove.LEFT);
             } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                game.playerMoved(PlayerMove.RIGHT);
+                game.onPlayerMoved(PlayerMove.RIGHT);
             }
         }
     }
