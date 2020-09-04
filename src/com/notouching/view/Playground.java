@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.*;
 
 public class Playground implements KeyListener {
-    private ViewInteraction game;
+    private final ViewInteraction game;
     private final int mapSize;
     private final int iconSize;
     private List<RenderedEntity> renderedEntities;
@@ -53,8 +53,10 @@ public class Playground implements KeyListener {
         mapLabels = new JLabel[mapSize][mapSize];
         BufferedImage bufferedImage = null;
 
+        int rand = (int) (Math.random() * 3);
+
         try {
-            bufferedImage = ImageIO.read(getClass().getResource("/img/background/" + Math.random() * 3 + ".png"));
+            bufferedImage = ImageIO.read(getClass().getResource("/img/background/" + rand + ".png"));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -227,10 +229,10 @@ public class Playground implements KeyListener {
         Image image;
         JLabel label;
 
-        for (int i = 0; i < food.size(); i++) {
+        for (Food f : food) {
 
             try {
-                bufferedImage = ImageIO.read(getClass().getResource("/img/food/" + food.get(i).getType() + ".png"));
+                bufferedImage = ImageIO.read(getClass().getResource("/img/food/" + f.getType() + ".png"));
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -239,8 +241,8 @@ public class Playground implements KeyListener {
             image = bufferedImage.getScaledInstance(iconSize - 15, iconSize - 15, Image.SCALE_SMOOTH);
             label = new JLabel(new ImageIcon(image));
 
-            mapLabels[food.get(i).getY()][food.get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, image, food.get(i)));
+            mapLabels[f.getY()][f.getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, image, f));
         }
     }
 
@@ -279,11 +281,6 @@ public class Playground implements KeyListener {
         Image virusImage = bufferedImage.getScaledInstance(iconSize, iconSize, Image.SCALE_SMOOTH);
         ImageIcon virusIcon = new ImageIcon(virusImage);
         virusesLabel[i].setIcon(virusIcon);
-
-        if (i == 3 && game.isRunning()) {
-            game.setStatus(false);
-            showMessageVirusesWin();
-        }
     }
 
     public void removeEntity(int y, int x) {

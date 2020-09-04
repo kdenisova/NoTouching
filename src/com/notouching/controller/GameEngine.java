@@ -15,24 +15,16 @@ public class GameEngine implements Visitor, ViewInteraction {
     private final int mapSize = 15;
 
     private boolean status;
+    private int speed;
+    private int skipCount;
+
     private List<People> people;
     private List<Food> food;
     private List<Food> groceryList;
-    private Set<Food> foundItems;
     private List<Sanitizer> sanitizers;
     private List<Virus> viruses;
+    private Set<Food> foundItems;
     private Playground playground;
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
-    private int speed;
-    private int skipCount;
 
     public GameEngine() {
         this.player = new Player(mapSize / 2, mapSize / 2);
@@ -122,6 +114,46 @@ public class GameEngine implements Visitor, ViewInteraction {
         play();
     }
 
+    public void doAction(int y, int x) {
+        for (GameEntity entity : entities) {
+            if (entity.getY() == y && entity.getX() == x) {
+                switch (entity.getEntityType()) {
+                    case PEOPLE:
+                        interact((People)entity);
+                        return;
+                    case FOOD:
+                        interact((Food)entity);
+                        return;
+                    case SANITIZER:
+                        interact((Sanitizer)entity);
+                        return;
+                }
+            }
+        }
+    }
+
+    public void isWin() {
+        if (foundItems.size() == getGroceryList().size()) {
+            setStatus(false);
+
+            if (player.getLevel() + 1 <= 10) {
+                playground.showMessageLevelUp(player.getLevel() + 1);
+                clear();
+            }
+            else
+                playground.showMessageWin();
+        }
+    }
+
+    public boolean isOccupied(int y, int x) {
+        for (GameEntity entity : entities) {
+            if (entity.getY() == y && entity.getX() == x) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public int randomGenerator(int n) {
         return (int) (Math.random() * n);
     }
@@ -168,15 +200,6 @@ public class GameEngine implements Visitor, ViewInteraction {
         }
     }
 
-    public boolean checkGrocery(Food food) {
-        for (Food f : groceryList) {
-            if (f.getType() == food.getType())
-                return true;
-        }
-
-        return false;
-    }
-
     public void setGroceryList() {
         this.groceryList = new ArrayList<>();
         int n;
@@ -184,7 +207,7 @@ public class GameEngine implements Visitor, ViewInteraction {
         for (int i = 0; i < mapSize / 3 + player.getLevel(); i++) {
             n = randomGenerator(food.size());
 
-            while (checkGrocery(food.get(n))) {
+            while (groceryList.contains(food.get(n))) {
                 n = randomGenerator(food.size());
             }
 
@@ -220,89 +243,23 @@ public class GameEngine implements Visitor, ViewInteraction {
             this.viruses.add(virus);
             playground.renderVirus(virus.getType(), this.viruses.size());
 
-            if (this.viruses.size() == 3)
+            if (this.viruses.size() == 3) {
                 setStatus(false);
-        }
-    }
-
-    public void checkEntity(int y, int x) {
-        for (GameEntity entity : entities) {
-            if (entity.getY() == y && entity.getX() == x) {
-                switch (entity.getEntityType()) {
-                    case PEOPLE:
-                        interact((People)entity);
-                        return;
-                    case FOOD:
-                        interact((Food)entity);
-                        return;
-                    case SANITIZER:
-                        interact((Sanitizer)entity);
-                        return;
-                }
+                playground.showMessageVirusesWin();
             }
         }
     }
 
-    public void isWin() {
-        if (foundItems.size() == getGroceryList().size()) {
-            setStatus(false);
-
-            if (player.getLevel() + 1 <= 10) {
-                playground.showMessageLevelUp(player.getLevel() + 1);
-                clear();
-            }
-            else
-                playground.showMessageWin();
-        }
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
-    public boolean isOccupied(int y, int x) {
-        for (GameEntity entity : entities) {
-            if (entity.getY() == y && entity.getX() == x) {
-                return true;
-            }
-        }
-        return false;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
-    @Override
-    public void onPlayerMoved(PlayerMove move) {
-        int y, x;
-        y = player.getY();
-        x = player.getX();
-
-        switch (move) {
-            case UP:
-                if (y != 0)
-                    y--;
-                break;
-            case DOWN:
-                if (y < mapSize - 1)
-                    y++;
-                break;
-            case LEFT:
-                if (x != 0)
-                    x--;
-                break;
-            case RIGHT:
-                if (x < mapSize - 1)
-                    x++;
-                break;
-        }
-
-        if (isOccupied(y, x))
-            checkEntity(y, x);
-
-        if (status) {
-            int oldY = player.getY();
-            int oldX = player.getX();
-
-            player.setY(y);
-            player.setX(x);
-
-            playground.renderPlayer(oldY, oldX, y, x);
-            isWin();
-        }
+    public void setFoundItems() {
+        this.foundItems = new HashSet<>();
     }
 
     public Player getPlayer() {
@@ -333,13 +290,72 @@ public class GameEngine implements Visitor, ViewInteraction {
         return viruses;
     }
 
-    @Override
-    public int getSkipCount() {
-        return skipCount;
+    public int getSpeed() {
+        return speed;
     }
 
     public Set<Food> getFoundItems() {
         return foundItems;
+    }
+
+    public void removeFood(Food current) {
+        for (int i = 0; i < food.size(); i++) {
+            if (food.get(i).equals(current) && food.get(i).getY() == current.getY() && food.get(i).getX() == current.getX()) {
+                food.remove(i);
+
+                for (int j = 0; j < entities.size(); j++) {
+                    if (entities.get(j).getEntityType().equals(EntityType.FOOD)
+                            && entities.get(j).getY() == current.getY() && entities.get(j).getX() == current.getX()) {
+
+                        entities.remove(j);
+
+                        break;
+                    }
+                }
+
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void onPlayerMoved(PlayerMove move) {
+        int y, x;
+        y = player.getY();
+        x = player.getX();
+
+        switch (move) {
+            case UP:
+                if (y != 0)
+                    y--;
+                break;
+            case DOWN:
+                if (y < mapSize - 1)
+                    y++;
+                break;
+            case LEFT:
+                if (x != 0)
+                    x--;
+                break;
+            case RIGHT:
+                if (x < mapSize - 1)
+                    x++;
+                break;
+        }
+
+        if (isOccupied(y, x))
+            doAction(y, x);
+
+        if (status) {
+            int oldY = player.getY();
+            int oldX = player.getX();
+
+            player.setY(y);
+            player.setX(x);
+
+            playground.renderPlayer(oldY, oldX, y, x);
+            isWin();
+        }
     }
 
     @Override
@@ -347,17 +363,14 @@ public class GameEngine implements Visitor, ViewInteraction {
         return status;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    @Override
+    public int getSkipCount() {
+        return skipCount;
     }
 
     @Override
     public void setSkipCount(int skipCount) {
         this.skipCount = skipCount;
-    }
-
-    public void setFoundItems() {
-        this.foundItems = new HashSet<>();
     }
 
     @Override
@@ -386,22 +399,21 @@ public class GameEngine implements Visitor, ViewInteraction {
     }
 
     @Override
-    public void interact(Food food) {
-        player.setScore(player.getScore() + food.getScore());
+    public void interact(Food f) {
+        player.setScore(player.getScore() + f.getScore());
         playground.updateScore(player.getScore());
-        playground.removeEntity(food.getY(), food.getX());
+        playground.removeEntity(f.getY(), f.getX());
         skipCount = 2;
 
         for (int i = 0; i < groceryList.size(); i++) {
-            if (groceryList.get(i).getType() == food.getType()) {
-                foundItems.add(food);
+            if (groceryList.get(i).getType() == f.getType()) {
+                foundItems.add(f);
                 playground.updateGroceryList(i);
                 break;
             }
         }
 
-        this.food.remove(food);
-        this.entities.remove(food);
+        removeFood(f);
     }
 
     @Override

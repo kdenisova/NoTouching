@@ -1,5 +1,7 @@
 package com.notouching.model;
 
+import java.util.Objects;
+
 public class Virus extends GameEntity {
     private VirusType type;
     private int damage;
@@ -37,11 +39,15 @@ public class Virus extends GameEntity {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        if (obj == this)
-            return true;
-        return ((Virus)obj).getType() == this.getType();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Virus virus = (Virus) o;
+        return type == virus.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }

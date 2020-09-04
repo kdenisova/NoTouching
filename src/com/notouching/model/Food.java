@@ -3,6 +3,8 @@ package com.notouching.model;
 import com.notouching.controller.Interaction;
 import com.notouching.controller.Visitor;
 
+import java.util.Objects;
+
 public class Food extends GameEntity implements Interaction {
     private FoodType type;
     int score;
@@ -30,5 +32,18 @@ public class Food extends GameEntity implements Interaction {
     @Override
     public void accept(Visitor visitor) {
         visitor.interact(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Food food = (Food) o;
+        return type == food.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type);
     }
 }
