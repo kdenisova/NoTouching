@@ -1,8 +1,6 @@
 package com.notouching.controller;
 
-import com.notouching.model.Food;
-import com.notouching.model.People;
-import com.notouching.model.Sanitizer;
+import com.notouching.model.*;
 
 public interface Visitor {
     void interact(People people);

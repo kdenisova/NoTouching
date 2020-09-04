@@ -39,6 +39,7 @@ public class Food extends GameEntity implements Interaction {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Food food = (Food) o;
+
         return type == food.type;
     }
 

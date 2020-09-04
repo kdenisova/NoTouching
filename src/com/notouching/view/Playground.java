@@ -394,6 +394,7 @@ public class Playground implements KeyListener {
         if (game.isRunning()) {
             if (game.getSkipCount() > 0)
                 game.setSkipCount(0);
+
             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
                 game.onPlayerMoved(PlayerMove.DOWN);
             } else if (e.getKeyCode() == KeyEvent.VK_UP) {

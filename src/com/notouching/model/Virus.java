@@ -43,6 +43,7 @@ public class Virus extends GameEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Virus virus = (Virus) o;
+
         return type == virus.type;
     }
 

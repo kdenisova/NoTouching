@@ -27,7 +27,7 @@ public class GameEngine implements Visitor, ViewInteraction {
     private Playground playground;
 
     public GameEngine() {
-        this.player = new Player(mapSize / 2, mapSize / 2);
+        player = new Player(mapSize / 2, mapSize / 2);
     }
 
     public void play() {
@@ -151,6 +151,7 @@ public class GameEngine implements Visitor, ViewInteraction {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -159,7 +160,7 @@ public class GameEngine implements Visitor, ViewInteraction {
     }
 
     public void setPeople() {
-        this.people = new ArrayList<>();
+        people = new ArrayList<>();
 
         int y, x;
 
@@ -173,13 +174,13 @@ public class GameEngine implements Visitor, ViewInteraction {
             }
 
             People person = new People(new Virus(VirusType.getRandomVirus(), y, x), y, x);
-            this.people.add(person);
+            people.add(person);
             entities.add(person);
         }
     }
 
     public void setFood() {
-        this.food = new ArrayList<>();
+        food = new ArrayList<>();
 
         int y, x, score;
 
@@ -195,13 +196,13 @@ public class GameEngine implements Visitor, ViewInteraction {
             score = (int) (20 + Math.random() * 10);
 
             Food f = new Food(FoodType.getRandomFood(), score, y, x);
-            this.food.add(f);
+            food.add(f);
             entities.add(f);
         }
     }
 
     public void setGroceryList() {
-        this.groceryList = new ArrayList<>();
+        groceryList = new ArrayList<>();
         int n;
 
         for (int i = 0; i < mapSize / 3 + player.getLevel(); i++) {
@@ -211,12 +212,12 @@ public class GameEngine implements Visitor, ViewInteraction {
                 n = randomGenerator(food.size());
             }
 
-            this.groceryList.add(food.get(n));
+            groceryList.add(food.get(n));
         }
     }
 
     public void setSanitizers() {
-        this.sanitizers = new ArrayList<>();
+        sanitizers = new ArrayList<>();
 
         int y, x;
 
@@ -230,20 +231,20 @@ public class GameEngine implements Visitor, ViewInteraction {
             }
 
             Sanitizer sanitizer = new Sanitizer(EntityType.SANITIZER, y, x);
-            this.sanitizers.add(sanitizer);
+            sanitizers.add(sanitizer);
             entities.add(sanitizer);
         }
     }
 
     public void setViruses(Virus virus) {
-        if (this.viruses == null)
-            this.viruses = new ArrayList<>();
+        if (viruses == null)
+            viruses = new ArrayList<>();
 
-        if (!this.viruses.contains(virus)) {
-            this.viruses.add(virus);
-            playground.renderVirus(virus.getType(), this.viruses.size());
+        if (!viruses.contains(virus)) {
+            viruses.add(virus);
+            playground.renderVirus(virus.getType(), viruses.size());
 
-            if (this.viruses.size() == 3) {
+            if (viruses.size() == 3) {
                 setStatus(false);
                 playground.showMessageVirusesWin();
             }
@@ -259,7 +260,7 @@ public class GameEngine implements Visitor, ViewInteraction {
     }
 
     public void setFoundItems() {
-        this.foundItems = new HashSet<>();
+        foundItems = new HashSet<>();
     }
 
     public Player getPlayer() {
@@ -406,7 +407,7 @@ public class GameEngine implements Visitor, ViewInteraction {
         skipCount = 2;
 
         for (int i = 0; i < groceryList.size(); i++) {
-            if (groceryList.get(i).getType() == f.getType()) {
+            if (groceryList.get(i).equals(f)) {
                 foundItems.add(f);
                 playground.updateGroceryList(i);
                 break;
