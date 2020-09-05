@@ -16,7 +16,7 @@ Finish all 10 levels of the game and became a Symbol of Quarantine.
 
 1. Launch
      
-     `java -jar com.notouching.controller.NoTouching.jar`
+     `java -jar NoTouching.jar`
      
 2. Have fun!
 
