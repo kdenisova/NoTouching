@@ -1,15 +1,14 @@
 package com.notouching.model;
 
-import com.notouching.controller.Interaction;
-import com.notouching.controller.Visitor;
+import com.notouching.controller.PlayerInteraction;
 
-public class Sanitizer extends GameEntity implements Interaction {
+public class Sanitizer extends GameEntity {
     public Sanitizer(EntityType entityType, int y, int x) {
         super(entityType, y, x);
     }
 
     @Override
-    public void accept(Visitor visitor) {
-        visitor.interact(this);
+    public void accept(PlayerInteraction interaction) {
+        interaction.interact(this);
     }
 }

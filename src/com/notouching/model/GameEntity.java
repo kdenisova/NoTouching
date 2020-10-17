@@ -1,6 +1,8 @@
 package com.notouching.model;
 
-public class GameEntity {
+import com.notouching.controller.PlayerInteraction;
+
+public abstract class GameEntity {
     private EntityType entityType;
     private int y;
     private int x;
@@ -34,4 +36,6 @@ public class GameEntity {
     public void setEntityType(EntityType entityType) {
         this.entityType = entityType;
     }
+
+    public abstract void accept(PlayerInteraction interaction);
 }

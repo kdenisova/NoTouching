@@ -2,7 +2,7 @@ package com.notouching.model;
 
 public enum EntityType {
     VIRUS,
-    PEOPLE,
+    CUSTOMER,
     FOOD,
     SANITIZER
 }

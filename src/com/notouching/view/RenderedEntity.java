@@ -24,8 +24,12 @@ public class RenderedEntity {
         this.label = label;
     }
 
-    public GameEntity getEntity() {
-        return entity;
+    public int getY() {
+        return entity.getY();
+    }
+
+    public int getX() {
+        return entity.getX();
     }
 
     public Image getImage() {

@@ -2,8 +2,11 @@ package com.notouching.controller;
 
 import com.notouching.model.*;
 
-public interface Visitor {
-    void interact(People people);
+//Visitor Pattern
+public interface PlayerInteraction {
+    void interact(Customer customer);
+
     void interact(Food food);
+
     void interact(Sanitizer sanitizer);
 }

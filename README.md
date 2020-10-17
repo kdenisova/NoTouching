@@ -4,7 +4,7 @@
 
 ## Description
 
-There is 2020 and pandemic time in the world. You are the hero who need to go to the grocery store. You should find all items from the grocery list in the store. But it is not so easy as you think. The store is full of people who may possible be infected with some kind of viruses. You must be very careful on your trip. Collect sanitizers to prevent be infected by people. And remember… NO TOUCHING!
+There is 2020 and pandemic time in the world. You are the hero who need to go to the grocery store. You should find all items from the grocery list in the store. But it is not so easy as you think. The store is full of customer who may possible be infected with some kind of viruses. You must be very careful on your trip. Collect sanitizers to prevent be infected by customer. And remember… NO TOUCHING!
 
 You will reach the next level if you find all items from the grocery list. 
 

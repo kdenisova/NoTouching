@@ -1,11 +1,10 @@
 package com.notouching.model;
 
-import com.notouching.controller.Interaction;
-import com.notouching.controller.Visitor;
+import com.notouching.controller.PlayerInteraction;
 
 import java.util.Objects;
 
-public class Food extends GameEntity implements Interaction {
+public class Food extends GameEntity {
     private FoodType type;
     int score;
 
@@ -30,8 +29,8 @@ public class Food extends GameEntity implements Interaction {
     }
 
     @Override
-    public void accept(Visitor visitor) {
-        visitor.interact(this);
+    public void accept(PlayerInteraction interaction) {
+        interaction.interact(this);
     }
 
     @Override

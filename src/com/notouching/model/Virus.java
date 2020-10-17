@@ -2,12 +2,11 @@ package com.notouching.model;
 
 import java.util.Objects;
 
-public class Virus extends GameEntity {
+public class Virus {
     private VirusType type;
     private int damage;
 
-    public Virus(VirusType type, int y, int x) {
-        super(EntityType.VIRUS, y, x);
+    public Virus(VirusType type) {
         this.type = type;
         setDamage();
     }

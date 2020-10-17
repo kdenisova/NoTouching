@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class GameEngine implements Visitor, ViewInteraction {
+public class GameEngine implements PlayerInteraction, ViewInteraction {
     private final List<GameEntity> entities = new ArrayList<>();
     private final Player player;
     private final int mapSize = 15;
@@ -18,7 +18,7 @@ public class GameEngine implements Visitor, ViewInteraction {
     private int speed;
     private int skipCount;
 
-    private List<People> people;
+    private List<Customer> customers;
     private List<Food> food;
     private List<Food> groceryList;
     private List<Sanitizer> sanitizers;
@@ -32,7 +32,7 @@ public class GameEngine implements Visitor, ViewInteraction {
 
     public void play() {
         setStatus(true);
-        setPeople();
+        setCustomers();
         setFood();
         setSanitizers();
         setGroceryList();
@@ -40,7 +40,9 @@ public class GameEngine implements Visitor, ViewInteraction {
         setSpeed(1000 / player.getLevel());
 
         playground = new Playground(this, mapSize);
-        playground.render(player, groceryList, people, food, sanitizers);
+        playground.render(player, groceryList, customers, food, sanitizers);
+
+        PlayerInteraction i = this;
 
         new Thread(new Runnable() {
             @Override
@@ -56,31 +58,32 @@ public class GameEngine implements Visitor, ViewInteraction {
                                 return;
                             }
 
-                            for (People person : people) {
+                            for (Customer customer : customers) {
                                 y = randomGenerator(2);
                                 x = randomGenerator(2);
 
                                 if (y == 0)
-                                    y = person.getY() - 1;
+                                    y = customer.getY() - 1;
                                 else
-                                    y = person.getY() + 1;
+                                    y = customer.getY() + 1;
 
                                 if (x == 0)
-                                    x = person.getX() - 1;
+                                    x = customer.getX() - 1;
                                 else
-                                    x = person.getX() + 1;
+                                    x = customer.getX() + 1;
 
                                 if (!isOccupied(y, x) && (x >= 0 && x < mapSize) && (y >= 0 && y < mapSize)) {
-                                    int oldY = person.getY();
-                                    int oldX = person.getX();
+                                    int oldY = customer.getY();
+                                    int oldX = customer.getX();
 
-                                    playground.movePeople(oldY, oldX, y, x);
+                                    playground.moveCustomer(oldY, oldX, y, x);
 
-                                    person.setY(y);
-                                    person.setX(x);
+                                    customer.setY(y);
+                                    customer.setX(x);
 
-                                    if (y == player.getY() && x == player.getX())
-                                        interact(person);
+                                    if (y == player.getY() && x == player.getX()) {
+                                        customer.accept(i);
+                                    }
                                 }
                             }
                         }
@@ -102,7 +105,7 @@ public class GameEngine implements Visitor, ViewInteraction {
         player.setX(mapSize / 2);
 
         entities.clear();
-        people.clear();
+        customers.clear();
         food.clear();
         groceryList.clear();
         sanitizers.clear();
@@ -115,20 +118,18 @@ public class GameEngine implements Visitor, ViewInteraction {
     }
 
     public void doAction(int y, int x) {
+        GameEntity toBeInteractedWith = null;
+
         for (GameEntity entity : entities) {
             if (entity.getY() == y && entity.getX() == x) {
-                switch (entity.getEntityType()) {
-                    case PEOPLE:
-                        interact((People)entity);
-                        return;
-                    case FOOD:
-                        interact((Food)entity);
-                        return;
-                    case SANITIZER:
-                        interact((Sanitizer)entity);
-                        return;
-                }
+                toBeInteractedWith = entity;
+                break;
             }
+        }
+
+        if (toBeInteractedWith != null) {
+            // we found somebody to be interacted with
+            toBeInteractedWith.accept(this);
         }
     }
 
@@ -159,8 +160,8 @@ public class GameEngine implements Visitor, ViewInteraction {
         return (int) (Math.random() * n);
     }
 
-    public void setPeople() {
-        people = new ArrayList<>();
+    public void setCustomers() {
+        customers = new ArrayList<>();
 
         int y, x;
 
@@ -173,9 +174,9 @@ public class GameEngine implements Visitor, ViewInteraction {
                 y = randomGenerator(mapSize);
             }
 
-            People person = new People(new Virus(VirusType.getRandomVirus(), y, x), y, x);
-            people.add(person);
-            entities.add(person);
+            Customer customer = new Customer(new Virus(VirusType.getRandomVirus()), y, x);
+            customers.add(customer);
+            entities.add(customer);
         }
     }
 
@@ -271,8 +272,8 @@ public class GameEngine implements Visitor, ViewInteraction {
         return entities;
     }
 
-    public List<People> getPeople() {
-        return people;
+    public List<Customer> getCustomers() {
+        return customers;
     }
 
     public List<Food> getFood() {
@@ -306,6 +307,26 @@ public class GameEngine implements Visitor, ViewInteraction {
 
                 for (int j = 0; j < entities.size(); j++) {
                     if (entities.get(j).getEntityType().equals(EntityType.FOOD)
+                            && entities.get(j).getY() == current.getY() && entities.get(j).getX() == current.getX()) {
+
+                        entities.remove(j);
+
+                        break;
+                    }
+                }
+
+                break;
+            }
+        }
+    }
+
+    public void removeSanitizer(Sanitizer current) {
+        for (int i = 0; i < sanitizers.size(); i++) {
+            if (sanitizers.get(i).getY() == current.getY() && sanitizers.get(i).getX() == current.getX()) {
+                sanitizers.remove(i);
+
+                for (int j = 0; j < entities.size(); j++) {
+                    if (entities.get(j).getEntityType().equals(EntityType.SANITIZER)
                             && entities.get(j).getY() == current.getY() && entities.get(j).getX() == current.getX()) {
 
                         entities.remove(j);
@@ -375,16 +396,16 @@ public class GameEngine implements Visitor, ViewInteraction {
     }
 
     @Override
-    public void interact(People people) {
+    public void interact(Customer customer) {
         if (player.getSanitizer() == 0) {
-            if (player.getHealth() - people.getVirus().getDamage() > 0) {
-                player.setHealth(player.getHealth() - people.getVirus().getDamage());
+            if (player.getHealth() - customer.getVirus().getDamage() > 0) {
+                player.setHealth(player.getHealth() - customer.getVirus().getDamage());
                 playground.updateHealth(player.getHealth());
-                setViruses(people.getVirus());
+                setViruses(customer.getVirus());
             }
             else {
                 player.setHealth(0);
-                setViruses(people.getVirus());
+                setViruses(customer.getVirus());
                 playground.updateHealth(0);
 
                 if (status) {
@@ -400,21 +421,21 @@ public class GameEngine implements Visitor, ViewInteraction {
     }
 
     @Override
-    public void interact(Food f) {
-        player.setScore(player.getScore() + f.getScore());
+    public void interact(Food food) {
+        player.setScore(player.getScore() + food.getScore());
         playground.updateScore(player.getScore());
-        playground.removeEntity(f.getY(), f.getX());
+        playground.removeEntity(food.getY(), food.getX());
         skipCount = 2;
 
         for (int i = 0; i < groceryList.size(); i++) {
-            if (groceryList.get(i).equals(f)) {
-                foundItems.add(f);
+            if (groceryList.get(i).equals(food)) {
+                foundItems.add(food);
                 playground.updateGroceryList(i);
                 break;
             }
         }
 
-        removeFood(f);
+        removeFood(food);
     }
 
     @Override
@@ -422,5 +443,6 @@ public class GameEngine implements Visitor, ViewInteraction {
         player.setSanitizer(player.getSanitizer() + 1);
         playground.updateSanitizer(player.getSanitizer());
         playground.removeEntity(sanitizer.getY(), sanitizer.getX());
+        removeSanitizer(sanitizer);
     }
 }

@@ -39,7 +39,7 @@ public class Playground implements KeyListener {
         this.iconSize = 50;
     }
 
-    public void render(Player player, List<Food> groceryList, List<People> people, List<Food> food, List<Sanitizer> sanitizers) {
+    public void render(Player player, List<Food> groceryList, List<Customer> customers, List<Food> food, List<Sanitizer> sanitizers) {
         frame = new JFrame("No Touching!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
@@ -82,7 +82,7 @@ public class Playground implements KeyListener {
         mapLabels[player.getY()][player.getX()].addKeyListener(this);
 
         //render game entities
-        renderPeople(people);
+        renderCustomers(customers);
         renderFood(food);
         renderSanitizers(sanitizers);
 
@@ -126,7 +126,7 @@ public class Playground implements KeyListener {
         rulesPanel.setLayout(new GridLayout(4, 1));
         rulesPanel.setBorder(BorderFactory.createTitledBorder("Rules"));
 
-        JLabel rule1 = new JLabel("Find all product from the grocery list.", JLabel.CENTER);
+        JLabel rule1 = new JLabel("Find all product from the grocery list", JLabel.CENTER);
         rule1.setFont(font);
         JLabel rule2 = new JLabel("Collect sanitizers to prevent infection", JLabel.CENTER);
         rule2.setFont(font);
@@ -202,12 +202,12 @@ public class Playground implements KeyListener {
         mapLabels[newY][newX].add(playerLabel);
     }
 
-    public void renderPeople(List<People> people) {
+    public void renderCustomers(List<Customer> customers) {
         BufferedImage bufferedImage = null;
         Image image;
         JLabel label;
 
-        for (int i = 0; i < people.size(); i++) {
+        for (int i = 0; i < customers.size(); i++) {
 
             try {
                 bufferedImage = ImageIO.read(getClass().getResource("/img/people/" + (i % 6) + ".png"));
@@ -219,8 +219,8 @@ public class Playground implements KeyListener {
             image = bufferedImage.getScaledInstance(iconSize - 10, iconSize - 10, Image.SCALE_SMOOTH);
             label = new JLabel(new ImageIcon(image));
 
-            mapLabels[people.get(i).getY()][people.get(i).getX()].add(label);
-            renderedEntities.add(new RenderedEntity(label, image, people.get(i)));
+            mapLabels[customers.get(i).getY()][customers.get(i).getX()].add(label);
+            renderedEntities.add(new RenderedEntity(label, image, customers.get(i)));
         }
     }
 
@@ -285,7 +285,7 @@ public class Playground implements KeyListener {
 
     public void removeEntity(int y, int x) {
         for (int i = 0; i < renderedEntities.size(); i++) {
-            if (y == renderedEntities.get(i).getEntity().getY() && x == renderedEntities.get(i).getEntity().getX()) {
+            if (y == renderedEntities.get(i).getY() && x == renderedEntities.get(i).getX()) {
                 mapLabels[y][x].remove(renderedEntities.get(i).getLabel());
                 renderedEntities.remove(i);
                 break;
@@ -299,9 +299,9 @@ public class Playground implements KeyListener {
         mapLabels[y][x].repaint();
     }
 
-    public void movePeople(int oldY, int oldX, int newY, int newX) {
+    public void moveCustomer(int oldY, int oldX, int newY, int newX) {
         for (RenderedEntity renderedEntity : renderedEntities) {
-            if (oldY == renderedEntity.getEntity().getY() && oldX == renderedEntity.getEntity().getX()) {
+            if (oldY == renderedEntity.getY() && oldX == renderedEntity.getX()) {
                 mapLabels[oldY][oldX].remove(renderedEntity.getLabel());
 
                 frame.revalidate();
