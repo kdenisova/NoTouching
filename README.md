@@ -4,13 +4,13 @@
 
 ## Description
 
-There is 2020 and pandemic time in the world. You are the hero who need to go to the grocery store. You should find all items from the grocery list in the store. But it is not so easy as you think. The store is full of customer who may possible be infected with some kind of viruses. You must be very careful on your trip. Collect sanitizers to prevent be infected by customer. And remember… NO TOUCHING!
+There is 2020 and pandemic time in the world. You are the hero who needs to go to the grocery store. You should find all items from the grocery list in the store. But it is not so easy as you think. The store is full of customers who may possible be infected with some kind of virus. You must be very careful on your trip. Collect sanitizers to prevent the infection. And remember… NO TOUCHING!
 
 You will reach the next level if you find all items from the grocery list. 
 
 You will lose the game if you collect all the possible viruses or you cannot protect yourself from too many touches.
 
-Finish all 10 levels of the game and became a Symbol of Quarantine.
+Finish all 10 levels of the game and become a Symbol of Quarantine.
 
 ## How to play?
 
@@ -22,7 +22,7 @@ Finish all 10 levels of the game and became a Symbol of Quarantine.
 
 ## Screenshots
 
-![image](/screenshots/1.jpg)
+![image](/screenshots/1.jpeg)
 
 ![alt text](/screenshots/2.jpeg)
 
