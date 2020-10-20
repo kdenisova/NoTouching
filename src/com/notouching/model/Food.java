@@ -6,7 +6,7 @@ import java.util.Objects;
 
 public class Food extends GameEntity {
     private FoodType type;
-    int score;
+    private int score;
 
     public Food(FoodType type, int score, int y, int x) {
         super(EntityType.FOOD, y, x);

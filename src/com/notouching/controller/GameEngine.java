@@ -238,8 +238,9 @@ public class GameEngine implements PlayerInteraction, ViewInteraction {
     }
 
     public void setViruses(Virus virus) {
-        if (viruses == null)
+        if (viruses == null) {
             viruses = new ArrayList<>();
+        }
 
         if (!viruses.contains(virus)) {
             viruses.add(virus);
@@ -300,14 +301,15 @@ public class GameEngine implements PlayerInteraction, ViewInteraction {
         return foundItems;
     }
 
-    public void removeFood(Food current) {
+    public void removeFood(Food f) {
         for (int i = 0; i < food.size(); i++) {
-            if (food.get(i).equals(current) && food.get(i).getY() == current.getY() && food.get(i).getX() == current.getX()) {
+            if (food.get(i).equals(f) && food.get(i).getY() == f.getY() && food.get(i).getX() == f.getX()) {
+
                 food.remove(i);
 
                 for (int j = 0; j < entities.size(); j++) {
                     if (entities.get(j).getEntityType().equals(EntityType.FOOD)
-                            && entities.get(j).getY() == current.getY() && entities.get(j).getX() == current.getX()) {
+                            && entities.get(j).getY() == f.getY() && entities.get(j).getX() == f.getX()) {
 
                         entities.remove(j);
 
@@ -320,14 +322,15 @@ public class GameEngine implements PlayerInteraction, ViewInteraction {
         }
     }
 
-    public void removeSanitizer(Sanitizer current) {
+    public void removeSanitizer(Sanitizer sanitizer) {
         for (int i = 0; i < sanitizers.size(); i++) {
-            if (sanitizers.get(i).getY() == current.getY() && sanitizers.get(i).getX() == current.getX()) {
+            if (sanitizers.get(i).getY() == sanitizer.getY() && sanitizers.get(i).getX() == sanitizer.getX()) {
+
                 sanitizers.remove(i);
 
                 for (int j = 0; j < entities.size(); j++) {
                     if (entities.get(j).getEntityType().equals(EntityType.SANITIZER)
-                            && entities.get(j).getY() == current.getY() && entities.get(j).getX() == current.getX()) {
+                            && entities.get(j).getY() == sanitizer.getY() && entities.get(j).getX() == sanitizer.getX()) {
 
                         entities.remove(j);
 
@@ -431,6 +434,7 @@ public class GameEngine implements PlayerInteraction, ViewInteraction {
             if (groceryList.get(i).equals(food)) {
                 foundItems.add(food);
                 playground.updateGroceryList(i);
+
                 break;
             }
         }

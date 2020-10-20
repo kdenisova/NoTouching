@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 import static javax.swing.JOptionPane.*;
 
 public class Playground implements KeyListener {
-    private final ViewInteraction game;
+    private final ViewInteraction interaction;
     private final int mapSize;
     private final int iconSize;
     private List<RenderedEntity> renderedEntities;
@@ -33,8 +33,8 @@ public class Playground implements KeyListener {
     private JLabel[] virusesLabel;
 
 
-    public Playground(ViewInteraction game, int mapSize) {
-        this.game = game;
+    public Playground(ViewInteraction interaction, int mapSize) {
+        this.interaction = interaction;
         this.mapSize = mapSize;
         this.iconSize = 50;
     }
@@ -288,6 +288,7 @@ public class Playground implements KeyListener {
             if (y == renderedEntities.get(i).getY() && x == renderedEntities.get(i).getX()) {
                 mapLabels[y][x].remove(renderedEntities.get(i).getLabel());
                 renderedEntities.remove(i);
+
                 break;
             }
         }
@@ -365,7 +366,7 @@ public class Playground implements KeyListener {
 
         JOptionPane.showMessageDialog(null,
                 "You win and became a symbol of quarantine!",
-                "Good job!", JOptionPane.PLAIN_MESSAGE, icon);
+                "Good job!", PLAIN_MESSAGE, icon);
     }
 
     public void showMessageVirusesWin() {
@@ -381,7 +382,7 @@ public class Playground implements KeyListener {
 
         JOptionPane.showMessageDialog(null,
                 "Too many touching!",
-                "GAME OVER", JOptionPane.PLAIN_MESSAGE, icon);
+                "GAME OVER", PLAIN_MESSAGE, icon);
     }
 
     @Override
@@ -391,18 +392,18 @@ public class Playground implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (game.isRunning()) {
-            if (game.getSkipCount() > 0)
-                game.setSkipCount(0);
+        if (interaction.isRunning()) {
+            if (interaction.getSkipCount() > 0)
+                interaction.setSkipCount(0);
 
             if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                game.onPlayerMoved(PlayerMove.DOWN);
+                interaction.onPlayerMoved(PlayerMove.DOWN);
             } else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                game.onPlayerMoved(PlayerMove.UP);
+                interaction.onPlayerMoved(PlayerMove.UP);
             } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                game.onPlayerMoved(PlayerMove.LEFT);
+                interaction.onPlayerMoved(PlayerMove.LEFT);
             } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                game.onPlayerMoved(PlayerMove.RIGHT);
+                interaction.onPlayerMoved(PlayerMove.RIGHT);
             }
         }
     }
